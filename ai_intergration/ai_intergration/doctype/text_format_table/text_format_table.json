@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2024-10-02 16:22:38.753549",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "before",
+  "target_doctype",
+  "field_name",
+  "field_name2",
+  "after",
+  "linked_field_name",
+  "linked_field_type"
+ ],
+ "fields": [
+  {
+   "fieldname": "before",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Before"
+  },
+  {
+   "fieldname": "field_name",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Field Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "after",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "After"
+  },
+  {
+   "fieldname": "target_doctype",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Target Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "linked_field_name",
+   "fieldtype": "Data",
+   "label": "Linked Field Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "field_name2",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Second Field Name (Optional)"
+  },
+  {
+   "fieldname": "linked_field_type",
+   "fieldtype": "Data",
+   "label": "Linked Field Type",
+   "read_only": 1
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2025-03-10 16:27:08.505339",
+ "modified_by": "Administrator",
+ "module": "Ai Intergration",
+ "name": "Text Format Table",
+ "owner": "Administrator",
+ "permissions": [],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

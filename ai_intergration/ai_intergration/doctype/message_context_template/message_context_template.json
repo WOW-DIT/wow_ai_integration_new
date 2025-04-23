@@ -1,0 +1,106 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "field:title",
+ "creation": "2024-10-02 15:43:38.550237",
+ "default_view": "List",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "llm",
+  "client_credentials",
+  "target_doctype",
+  "text_format",
+  "reference_targets",
+  "context_children",
+  "user_prompt",
+  "system_prompt",
+  "selected_model"
+ ],
+ "fields": [
+  {
+   "fieldname": "client_credentials",
+   "fieldtype": "Link",
+   "label": "Client Credentials",
+   "options": "Client Credentials"
+  },
+  {
+   "fieldname": "target_doctype",
+   "fieldtype": "Link",
+   "label": "Target Doctype",
+   "options": "DocType"
+  },
+  {
+   "fieldname": "system_prompt",
+   "fieldtype": "Text",
+   "label": "System Prompt"
+  },
+  {
+   "fieldname": "text_format",
+   "fieldtype": "Table",
+   "label": "Text Format",
+   "options": "Text Format Table"
+  },
+  {
+   "fieldname": "user_prompt",
+   "fieldtype": "Text",
+   "label": "User Prompt"
+  },
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
+   "unique": 1
+  },
+  {
+   "fieldname": "llm",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "LLM"
+  },
+  {
+   "fieldname": "selected_model",
+   "fieldtype": "Data",
+   "label": "Selected Model"
+  },
+  {
+   "fieldname": "context_children",
+   "fieldtype": "Table",
+   "label": "Context Children",
+   "options": "RAG Children Table"
+  },
+  {
+   "fieldname": "reference_targets",
+   "fieldtype": "Table",
+   "label": "Reference Targets",
+   "options": "Reference Targets Table"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-03-18 11:53:27.123798",
+ "modified_by": "Administrator",
+ "module": "Ai Intergration",
+ "name": "Message Context Template",
+ "naming_rule": "By fieldname",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
