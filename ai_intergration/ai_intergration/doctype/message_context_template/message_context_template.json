@@ -10,42 +10,74 @@
  "field_order": [
   "title",
   "llm",
+  "column_break_m7duu",
+  "whatsapp_business_id",
+  "selected_model",
+  "chatgpt_section",
+  "gpt_model",
+  "override_model",
+  "column_break_prrpj",
   "client_credentials",
+  "selected_gpt_model",
+  "section_break_ma8hx",
   "target_doctype",
   "text_format",
   "reference_targets",
   "context_children",
+  "personalization_section",
   "user_prompt",
   "system_prompt",
-  "selected_model"
+  "on_error",
+  "column_break_saftt",
+  "on_completion",
+  "integration_section",
+  "integration",
+  "section_break_en49w",
+  "source_type",
+  "column_break_uljt5",
+  "source_link",
+  "source_file",
+  "source_text",
+  "source_template",
+  "section_break_ymnbe",
+  "webhook_uri",
+  "column_break_zrcfp",
+  "auth_token",
+  "section_break_u25uy",
+  "json_template"
  ],
  "fields": [
   {
+   "depends_on": "eval: doc.override_model === 1",
    "fieldname": "client_credentials",
    "fieldtype": "Link",
    "label": "Client Credentials",
+   "mandatory_depends_on": "eval: doc.override_model === 1",
    "options": "Client Credentials"
   },
   {
    "fieldname": "target_doctype",
    "fieldtype": "Link",
+   "hidden": 1,
    "label": "Target Doctype",
    "options": "DocType"
   },
   {
    "fieldname": "system_prompt",
-   "fieldtype": "Text",
+   "fieldtype": "Long Text",
    "label": "System Prompt"
   },
   {
    "fieldname": "text_format",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Text Format",
    "options": "Text Format Table"
   },
   {
    "fieldname": "user_prompt",
    "fieldtype": "Text",
+   "hidden": 1,
    "label": "User Prompt"
   },
   {
@@ -63,24 +95,178 @@
   {
    "fieldname": "selected_model",
    "fieldtype": "Data",
+   "hidden": 1,
    "label": "Selected Model"
   },
   {
    "fieldname": "context_children",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Context Children",
    "options": "RAG Children Table"
   },
   {
    "fieldname": "reference_targets",
    "fieldtype": "Table",
+   "hidden": 1,
    "label": "Reference Targets",
    "options": "Reference Targets Table"
+  },
+  {
+   "fieldname": "whatsapp_business_id",
+   "fieldtype": "Data",
+   "label": "WhatsApp Business ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "integration_section",
+   "fieldtype": "Tab Break",
+   "label": "Integration"
+  },
+  {
+   "default": "0",
+   "fieldname": "integration",
+   "fieldtype": "Check",
+   "label": "Integration"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1",
+   "description": "Json body template for sending to your webhook endpoint",
+   "fieldname": "json_template",
+   "fieldtype": "Text Editor",
+   "label": "JSON Template",
+   "mandatory_depends_on": "eval: doc.integration === 1 && doc.webhook_uri"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1",
+   "description": "https://myserver.com/api/webhook",
+   "fieldname": "webhook_uri",
+   "fieldtype": "Data",
+   "label": "Webhook URI"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1",
+   "fieldname": "auth_token",
+   "fieldtype": "Data",
+   "label": "Auth Token"
+  },
+  {
+   "fieldname": "chatgpt_section",
+   "fieldtype": "Section Break",
+   "label": "ChatGPT"
+  },
+  {
+   "default": "0",
+   "description": "Will use GPT model as the primary model.",
+   "fieldname": "override_model",
+   "fieldtype": "Check",
+   "label": "Override Model"
+  },
+  {
+   "fieldname": "section_break_ma8hx",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "selected_gpt_model",
+   "fieldtype": "Data",
+   "hidden": 1,
+   "label": "Selected GPT Model"
+  },
+  {
+   "depends_on": "eval: doc.override_model === 1",
+   "fieldname": "gpt_model",
+   "fieldtype": "Select",
+   "label": "GPT Model",
+   "mandatory_depends_on": "eval: doc.override_model === 1"
+  },
+  {
+   "fieldname": "on_completion",
+   "fieldtype": "Long Text",
+   "label": "On Completion"
+  },
+  {
+   "fieldname": "on_error",
+   "fieldtype": "Long Text",
+   "label": "On Error"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1",
+   "fieldname": "source_type",
+   "fieldtype": "Select",
+   "label": "Source Type",
+   "options": "\nLink\nFile\nText\nTemplate"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1 && doc.source_type === \"File\"",
+   "fieldname": "source_file",
+   "fieldtype": "Attach",
+   "label": "Source File",
+   "mandatory_depends_on": "eval: doc.integration === 1 && doc.source_type === \"File\""
+  },
+  {
+   "depends_on": "eval: doc.integration === 1 && doc.source_type === \"Text\"",
+   "fieldname": "source_text",
+   "fieldtype": "Long Text",
+   "label": "Source Text",
+   "mandatory_depends_on": "eval: doc.integration === 1 && doc.source_type === \"Text\""
+  },
+  {
+   "fieldname": "section_break_ymnbe",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_zrcfp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.integration === 1 && doc.source_type === \"Link\"",
+   "description": "The API endpoint for fetching your local data.",
+   "fieldname": "source_link",
+   "fieldtype": "Data",
+   "label": "Source Link",
+   "mandatory_depends_on": "eval: doc.integration === 1 && doc.source_type === \"Link\""
+  },
+  {
+   "fieldname": "column_break_prrpj",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "column_break_m7duu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "personalization_section",
+   "fieldtype": "Tab Break",
+   "label": "Personalization"
+  },
+  {
+   "fieldname": "column_break_saftt",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_en49w",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "section_break_u25uy",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_uljt5",
+   "fieldtype": "Column Break"
+  },
+  {
+   "depends_on": "eval: doc.source_type === \"Template\"",
+   "fieldname": "source_template",
+   "fieldtype": "Link",
+   "label": "Source Template",
+   "mandatory_depends_on": "eval: doc.source_type === \"Template\"",
+   "options": "Ai Data Source Template"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-18 11:53:27.123798",
+ "modified": "2025-08-14 14:24:57.734015",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Message Context Template",

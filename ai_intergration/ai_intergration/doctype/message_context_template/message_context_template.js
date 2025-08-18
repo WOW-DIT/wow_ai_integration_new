@@ -10,13 +10,26 @@ frappe.ui.form.on('Message Context Template', {
 		}
 
 		getModels(frm)
-
+		
+		if(frm.doc.client_credentials) {
+			getModels(frm, true)
+		}
 
 		let c = [{}]
+	},
+	client_credentials: function(frm) {
+		if(frm.doc.client_credentials) {
+			getModels(frm, true)
+		}
 	},
 	llm: function(frm){
 		if(frm.doc.llm) {
 			frm.set_value("selected_model", frm.doc.llm)
+		}
+	},
+	gpt_model: function(frm) {
+		if(frm.doc.gpt_model) {
+			frm.set_value("selected_gpt_model", frm.doc.gpt_model)
 		}
 	},
 	target_doctype: function (frm , cdt ,cdn){
@@ -29,7 +42,6 @@ frappe.ui.form.on('Message Context Template', {
 function getEventDoctypes(frm,cdt,cdn)
 {
     frappe.model.with_doctype(frm.doc.target_doctype, function() {
-		console.log("AAAAAAA")
     	var options = $.map(frappe.get_meta(frm.doc.target_doctype).fields,
     			function(d) {
 					
@@ -130,28 +142,54 @@ function loadFieldsFromTargetDoctype(frm){
    		frm.refresh_field("text_format");
 }
 
-function getModels(frm) {
+function getModels(frm, is_gpt=false) {
+	let method 
+	if (is_gpt) {
+		method = "ai_intergration.ai_intergration.api.get_gpt_models"
+	} else {
+		method = "ai_intergration.ai_intergration.api.get_models"
+	}
 	frappe.call({
-		method: "ai_intergration.ai_intergration.api.get_models",
+		method: method,
 		callback: function(r) {
-			const models = [""];
-			let selected_model = ""
+			if (is_gpt) {
+				const models = [""].concat(r.message);
+				let selected_model = ""
 
-			for(const m of r.message) {
-				models.push(m.model)
-				if(frm.doc.selected_model == m.model) {
-					selected_model = m.model
+				for(const m of models) {
+					if(frm.doc.selected_gpt_model == m) {
+						selected_model = m
+					}
 				}
-			}
-
-			const model = frm.fields_dict['llm'];
-
-			frm.set_df_property("llm", "options", models.join("\n"));
-			
-			if(selected_model) {
-				frm.set_value('llm', selected_model);
+				console.log(models)
+	
+				frm.set_df_property("gpt_model", "options", models.join("\n"));
+				
+				if(selected_model) {
+					frm.set_value('selected_gpt_model', selected_model);
+				} else {
+					frm.refresh_field('selected_gpt_model');
+				}
 			} else {
-				frm.refresh_field('llm');
+				const models = [""];
+				let selected_model = ""
+
+				for(const m of r.message) {
+					models.push(m.model)
+					if(frm.doc.selected_model == m.model) {
+						selected_model = m.model
+					}
+				}
+	
+				const model = frm.fields_dict['llm'];
+	
+				frm.set_df_property("llm", "options", models.join("\n"));
+				
+				if(selected_model) {
+					frm.set_value('llm', selected_model);
+				} else {
+					frm.refresh_field('llm');
+				}
 			}
 		}
 	})

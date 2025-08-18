@@ -3,7 +3,7 @@
 
 frappe.ui.form.on('Ai Chat', {
 	refresh: function(frm) {
-		getModels(frm)
+		// getModels(frm)
 	},
 	model: function(frm) {
 		if(frm.doc.model) {

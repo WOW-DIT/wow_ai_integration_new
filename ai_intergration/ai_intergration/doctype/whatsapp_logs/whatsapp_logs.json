@@ -1,37 +1,27 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-03-05 13:12:05.703870",
+ "creation": "2025-07-24 17:55:22.236149",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "role",
-  "content"
+  "request_body"
  ],
  "fields": [
   {
-   "fieldname": "role",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Role",
-   "reqd": 1
-  },
-  {
-   "fieldname": "content",
+   "fieldname": "request_body",
    "fieldtype": "Long Text",
-   "in_list_view": 1,
-   "label": "Content",
-   "reqd": 1
+   "label": "Request body"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-12 10:20:12.900457",
+ "modified": "2025-07-24 17:55:22.236149",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
- "name": "Ai Message",
+ "name": "WhatsApp Logs",
  "owner": "Administrator",
  "permissions": [
   {

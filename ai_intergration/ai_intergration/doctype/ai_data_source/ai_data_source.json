@@ -1,0 +1,148 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-08-13 15:56:58.286348",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "title",
+  "column_break_ruhda",
+  "whatsapp_instance",
+  "section_break_hhdvq",
+  "when",
+  "error_message",
+  "column_break_ztnlr",
+  "instructions",
+  "section_break_jbsgj",
+  "url",
+  "auth_type",
+  "auth_token",
+  "column_break_1okrh",
+  "test_connection",
+  "verified",
+  "section_break_isjdo",
+  "filters"
+ ],
+ "fields": [
+  {
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title"
+  },
+  {
+   "fieldname": "column_break_ruhda",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "whatsapp_instance",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "WhatsApp Instance",
+   "options": "WhatsApp Instance",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_hhdvq",
+   "fieldtype": "Section Break"
+  },
+  {
+   "description": "What action will trigger the Ai agent to send the request.",
+   "fieldname": "when",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "When",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_jbsgj",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "test_connection",
+   "fieldtype": "Button",
+   "label": "Test Connection"
+  },
+  {
+   "fieldname": "column_break_1okrh",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "auth_token",
+   "fieldtype": "Data",
+   "label": "Auth Token"
+  },
+  {
+   "default": "0",
+   "fieldname": "verified",
+   "fieldtype": "Check",
+   "label": "Verified",
+   "read_only": 1
+  },
+  {
+   "fieldname": "instructions",
+   "fieldtype": "Text Editor",
+   "label": "Instructions"
+  },
+  {
+   "fieldname": "section_break_isjdo",
+   "fieldtype": "Section Break",
+   "label": "URL Parameters"
+  },
+  {
+   "fieldname": "filters",
+   "fieldtype": "Table",
+   "label": "Filters",
+   "options": "Ai Data Source Filters"
+  },
+  {
+   "fieldname": "column_break_ztnlr",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "auth_type",
+   "fieldtype": "Select",
+   "label": "Auth Type",
+   "mandatory_depends_on": "eval: doc.auth_token",
+   "options": "\nBearer\nBasic\nToken"
+  },
+  {
+   "fieldname": "error_message",
+   "fieldtype": "Data",
+   "label": "Error Message"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-08-14 14:21:47.706166",
+ "modified_by": "Administrator",
+ "module": "Ai Intergration",
+ "name": "Ai Data Source",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "show_title_field_in_link": 1,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "title_field": "title"
+}

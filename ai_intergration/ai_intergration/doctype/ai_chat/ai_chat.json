@@ -9,11 +9,17 @@
  "field_order": [
   "model",
   "label",
+  "selected_model",
+  "column_break_syeqp",
+  "context",
+  "whatsapp_business_id",
+  "whatsapp_client_id",
+  "section_break_ije9r",
   "messages",
+  "section_break_vchlu",
   "prompt",
   "send",
-  "response",
-  "selected_model"
+  "response"
  ],
  "fields": [
   {
@@ -44,7 +50,7 @@
   },
   {
    "fieldname": "model",
-   "fieldtype": "Select",
+   "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Model",
    "reqd": 1
@@ -54,11 +60,42 @@
    "fieldtype": "Data",
    "hidden": 1,
    "label": "Selected Model"
+  },
+  {
+   "fieldname": "context",
+   "fieldtype": "Link",
+   "label": "Context",
+   "options": "Message Context Template",
+   "reqd": 1
+  },
+  {
+   "fieldname": "whatsapp_business_id",
+   "fieldtype": "Data",
+   "label": "WhatsApp Business ID"
+  },
+  {
+   "fieldname": "column_break_syeqp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ije9r",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "whatsapp_client_id",
+   "fieldtype": "Data",
+   "label": "WhatsApp Client ID"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "section_break_vchlu",
+   "fieldtype": "Section Break",
+   "label": "Local"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-03-05 14:24:41.677184",
+ "modified": "2025-08-12 11:27:37.423218",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Chat",
@@ -81,5 +118,5 @@
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": [],
- "title_field": "label"
+ "title_field": "whatsapp_client_id"
 }

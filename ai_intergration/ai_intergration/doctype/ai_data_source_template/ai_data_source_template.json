@@ -1,37 +1,37 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-03-05 13:12:05.703870",
+ "creation": "2025-08-14 14:20:46.565924",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "role",
-  "content"
+  "title",
+  "data_source_table"
  ],
  "fields": [
   {
-   "fieldname": "role",
+   "fieldname": "title",
    "fieldtype": "Data",
    "in_list_view": 1,
-   "label": "Role",
+   "label": "Title",
    "reqd": 1
   },
   {
-   "fieldname": "content",
-   "fieldtype": "Long Text",
-   "in_list_view": 1,
-   "label": "Content",
+   "fieldname": "data_source_table",
+   "fieldtype": "Table",
+   "label": "Data Source Table",
+   "options": "Ai Data Source Table",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-12 10:20:12.900457",
+ "modified": "2025-08-14 14:21:26.898091",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
- "name": "Ai Message",
+ "name": "Ai Data Source Template",
  "owner": "Administrator",
  "permissions": [
   {
@@ -47,7 +47,9 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "title"
 }

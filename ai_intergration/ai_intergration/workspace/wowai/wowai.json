@@ -1,0 +1,106 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"S0khGc5R3j\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">WOWAI</span>\",\"col\":12}},{\"id\":\"VuxQgmBqNr\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI Admin\",\"col\":4}},{\"id\":\"IiMUrUUqlp\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI User\",\"col\":4}},{\"id\":\"U1e71Spse7\",\"type\":\"card\",\"data\":{\"card_name\":\"Pr\",\"col\":4}}]",
+ "creation": "2025-03-13 11:18:30.945996",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "color-review-points",
+ "idx": 0,
+ "is_hidden": 0,
+ "label": "WOWAI",
+ "links": [
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WOWAI Admin",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "LLM",
+   "link_count": 0,
+   "link_to": "LLM",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Message Context Template",
+   "link_count": 0,
+   "link_to": "Message Context Template",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "WOWAI User",
+   "link_count": 2,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Ai Chat",
+   "link_count": 0,
+   "link_to": "Ai Chat",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Ai Message",
+   "link_count": 0,
+   "link_to": "Ai Message",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "Pr",
+   "link_count": 1,
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Card Break"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "ai-ref4",
+   "link_count": 0,
+   "link_to": "ai-ref4",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  }
+ ],
+ "modified": "2025-07-27 16:34:41.024550",
+ "modified_by": "Administrator",
+ "module": "Ai Intergration",
+ "name": "WOWAI",
+ "number_cards": [],
+ "owner": "shaibiomar@wowit.sa",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [],
+ "roles": [],
+ "sequence_id": 35.0,
+ "shortcuts": [],
+ "title": "WOWAI"
+}
