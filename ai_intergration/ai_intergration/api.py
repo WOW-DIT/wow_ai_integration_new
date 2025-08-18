@@ -96,7 +96,7 @@ def get_gpt_models():
 
                 return models
     except Exception as e:
-        save_response_log(str(e), "1111111111111", "22222222222222222222")
+        save_response_log(str(e), "001", "001")
         
     frappe.throw("invalid credentials")
 
@@ -291,12 +291,10 @@ def ask_gpt_ai(model, context, messages, stream=False):
             }
     
     except openai.OpenAIError as e:
-        save_response_log(str(e), "000000", "000000")
+        save_response_log(str(e), "002", "002")
         print(f"OpenAI API error: {e}")
     except Exception as e:
-        save_response_log(str(e), "0101010101", "0001010101010000")
-
-        print(f"General error: {e}")
+        save_response_log(str(e), "003", "003")
 
 
 def get_online_data(url, auth_type=None, auth_token=None, timeout=30):
