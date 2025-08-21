@@ -9,6 +9,7 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "default_model",
   "llm",
   "column_break_m7duu",
   "whatsapp_business_id",
@@ -87,10 +88,12 @@
    "unique": 1
   },
   {
+   "depends_on": "eval: doc.ollama_model === 0",
    "fieldname": "llm",
    "fieldtype": "Select",
    "in_list_view": 1,
-   "label": "LLM"
+   "label": "LLM",
+   "mandatory_depends_on": "eval: doc.ollama_model === 0"
   },
   {
    "fieldname": "selected_model",
@@ -262,11 +265,17 @@
    "label": "Source Template",
    "mandatory_depends_on": "eval: doc.source_type === \"Template\"",
    "options": "Ai Data Source Template"
+  },
+  {
+   "default": "0",
+   "fieldname": "default_model",
+   "fieldtype": "Check",
+   "label": "Default Model"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-14 14:24:57.734015",
+ "modified": "2025-08-21 12:53:23.949830",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Message Context Template",

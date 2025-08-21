@@ -8,6 +8,7 @@ from datetime import datetime
 from io import BytesIO
 from docx import Document
 import pandas as pd
+from ollama import Client
 
 AI_SYSTEM_PROMPT = """
 Today's Date: {DATE}
@@ -131,7 +132,7 @@ def get_ai_requests_types(source_template):
 
 
 @frappe.whitelist(allow_guest=True)
-def ai_chat(model, chat_id, new_message, stream=False):
+def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
     try:
         if not isinstance(new_message, dict):
             new_message = json.loads(new_message)
@@ -153,11 +154,12 @@ def ai_chat(model, chat_id, new_message, stream=False):
         messages.append(new_message)
             
         if context.override_model == 1:
-            ai_response = ask_gpt_ai(model, context, messages)
+            ai_response = ask_gpt_ai(model, context, messages, to_number)
+        elif context.default_model == 1:
+            ai_response = ask_ollama_ai(model, messages, to_number)
         else:
-            ai_response = ask_local_ai(model, messages)
+            ai_response = ask_local_ai(model, messages, to_number)
 
-        # return ai_response
         role = ai_response.get("role")
         content = ai_response.get("content")
         content = content.replace("```json", "").replace("```", "")
@@ -192,17 +194,17 @@ def ai_chat(model, chat_id, new_message, stream=False):
 
                 query_data = get_online_data(url, auth_type, auth_token)
                 if query_data:
-                    # messages[0]["content"] = str(messages[0]["content"]).replace("{CONTEXT}", str(query_data))
                     messages.append({
                         "role": "system",
                         "content": str(query_data),
                     })
 
                     if context.override_model == 1:
-                        ai_response = ask_gpt_ai(model, context, messages)
+                        ai_response = ask_gpt_ai(model, context, messages, to_number)
+                    elif context.default_model == 1:
+                        ai_response = ask_ollama_ai(model, messages, to_number)
                     else:
-                        ai_response = ask_local_ai(model, messages)
-
+                        ai_response = ask_local_ai(model, messages, to_number)
 
                     role = ai_response.get("role")
                     content = ai_response.get("content")
@@ -240,36 +242,62 @@ def ai_chat(model, chat_id, new_message, stream=False):
         return ai_message
     
     except Exception as e:
+        save_response_log(str(e), "AAAAAAAA", "AAAAAAAAAAAAA")
         return None
 
 
 
-def ask_local_ai(model, messages, stream=False):
-    settings = frappe.get_doc("Ai Settings", "Ai Settings")
-    url = f"{settings.base_url}/chat"
-    body = {
-        "model": model,
-        "messages": messages,
-        "stream": stream,
-    }
-    response = requests.post(url, json=body)
-
-    if response.status_code == 200:
-        res_message = response.json()["message"]
-        role = res_message["role"]
-        content = res_message["content"]
-        # frappe.throw(str(res_message))
-        content = re.sub(r'[\x00-\x1F\x7F]', '', content)
-
-        return {
-            "role": role,
-            "content": content,
+def ask_local_ai(model, messages, to_number, stream=False):
+    try:
+        settings = frappe.get_doc("Ai Settings", "Ai Settings")
+        url = f"{settings.base_url}/chat"
+        body = {
+            "model": model,
+            "messages": messages,
+            "stream": stream,
         }
-    else:
-        frappe.throw("ERROR: response failed")
+        response = requests.post(url, json=body)
+
+        if response.status_code == 200:
+            res_message = response.json()["message"]
+            role = res_message["role"]
+            content = res_message["content"]
+            content = re.sub(r'[\x00-\x1F\x7F]', '', content)
+
+            return {
+                "role": role,
+                "content": content,
+            }
+    
+    except Exception as e:
+        save_response_log(
+            str(e),
+            "Local",
+            to_number,
+        )
 
 
-def ask_gpt_ai(model, context, messages, stream=False):
+def ask_ollama_ai(model, messages, to_number, stream=False):
+    try:
+        client = Client(
+            host="https://ollama.com",
+            headers={'Authorization': '4b78847708a1463297acb80a08716843.SBNnfMMNHiqn8RgfzSIj4E6_'}
+        )
+
+        resp = client.chat(model=model, messages=messages, stream=False)
+        msg = resp.get("message") or {}
+
+        return {"role": msg.get("role", "assistant"), "content": msg.get("content", "")}
+    
+    except Exception as e:
+        save_response_log(
+            str(e),
+            "Default",
+            to_number,
+        )
+
+
+def ask_gpt_ai(model, context, messages, to_number, stream=False):
     try:
         creds = frappe.get_doc("Client Credentials", context.client_credentials)
 
@@ -292,11 +320,10 @@ def ask_gpt_ai(model, context, messages, stream=False):
             }
     
     except openai.OpenAIError as e:
-        save_response_log(str(e), "002", "002", True)
-        print(f"OpenAI API error: {e}")
+        save_response_log(str(e), "GPT", to_number, True)
 
     except Exception as e:
-        save_response_log(str(e), "003", "003", True)
+        save_response_log(str(e), "GPT", to_number, True)
 
 
 def get_online_data(url, auth_type=None, auth_token=None, timeout=30):
