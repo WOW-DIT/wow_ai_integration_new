@@ -90,7 +90,7 @@
    "type": "Link"
   }
  ],
- "modified": "2025-07-27 16:34:41.024550",
+ "modified": "2025-08-21 11:32:13.861343",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "WOWAI",
@@ -100,7 +100,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 35.0,
+ "sequence_id": 37.0,
  "shortcuts": [],
  "title": "WOWAI"
 }

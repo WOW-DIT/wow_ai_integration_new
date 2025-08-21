@@ -16,7 +16,7 @@ Instructions:
 --------------
 {INSTRUCTIONS}
 
-THE MOST IMPORTANT RULE: return a pure plain JSON string containing these fixed main fields:
+THE MOST IMPORTANT RULE: return a pure plain JSON string (text not code) containing these fixed main fields:
 1- type:
   A- 'question' if more information is needed.
   B- 'request' if the user provided some information and 'Context Data' section is empty, example: car model, and you need to fetch more data to availability, or answer some questions.
@@ -96,18 +96,19 @@ def get_gpt_models():
 
                 return models
     except Exception as e:
-        save_response_log(str(e), "001", "001")
+        save_response_log(str(e), "001", "001", True)
         
     frappe.throw("invalid credentials")
 
 
-def save_response_log(body, from_number, to_number):
+def save_response_log(body, from_number, to_number, is_error=False):
     log = frappe.new_doc("WhatsApp Logs")
     log.from_number = from_number
     log.to_number = to_number
     log.method = "Sent"
     log.timestamp = datetime.now()
     log.body = body
+    log.is_error = is_error
     log.save(ignore_permissions=True)
 
 
@@ -150,7 +151,7 @@ def ai_chat(model, chat_id, new_message, stream=False):
 
         messages = get_current_messages(chat_id, context)
         messages.append(new_message)
-
+            
         if context.override_model == 1:
             ai_response = ask_gpt_ai(model, context, messages)
         else:
@@ -159,6 +160,7 @@ def ai_chat(model, chat_id, new_message, stream=False):
         # return ai_response
         role = ai_response.get("role")
         content = ai_response.get("content")
+        content = content.replace("```json", "").replace("```", "")
 
         data = json.loads(content)
 
@@ -232,14 +234,13 @@ def ai_chat(model, chat_id, new_message, stream=False):
         if response_type == "answer" and context.integration == 1 and context.webhook_uri:
             json_body = data.get("json_body")
             extra_data = post_to_webhook(context, json_body)
-
+        
         chat.save(ignore_permissions=True)
         frappe.db.commit()
-        
         return ai_message
     
     except Exception as e:
-        frappe.throw(f"Error: {e}")
+        return None
 
 
 
@@ -291,10 +292,11 @@ def ask_gpt_ai(model, context, messages, stream=False):
             }
     
     except openai.OpenAIError as e:
-        save_response_log(str(e), "002", "002")
+        save_response_log(str(e), "002", "002", True)
         print(f"OpenAI API error: {e}")
+
     except Exception as e:
-        save_response_log(str(e), "003", "003")
+        save_response_log(str(e), "003", "003", True)
 
 
 def get_online_data(url, auth_type=None, auth_token=None, timeout=30):
