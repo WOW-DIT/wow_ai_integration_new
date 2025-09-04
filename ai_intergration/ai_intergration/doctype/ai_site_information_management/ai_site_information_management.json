@@ -1,52 +1,45 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:app_name",
- "creation": "2024-10-02 14:12:35.801216",
+ "creation": "2025-08-27 15:53:27.501169",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "app_name",
-  "user",
-  "column_break_dsc4q",
-  "api_key"
+  "license_number",
+  "site_owner",
+  "developer",
+  "engineering_design_office"
  ],
  "fields": [
   {
-   "fieldname": "app_name",
+   "fieldname": "license_number",
    "fieldtype": "Data",
-   "label": "App Name",
-   "unique": 1
+   "label": "License Number"
   },
   {
-   "fieldname": "api_key",
-   "fieldtype": "Password",
-   "in_list_view": 1,
-   "label": "API Key",
-   "reqd": 1
+   "fieldname": "developer",
+   "fieldtype": "Data",
+   "label": "Developer"
   },
   {
-   "fieldname": "column_break_dsc4q",
-   "fieldtype": "Column Break"
+   "fieldname": "engineering_design_office",
+   "fieldtype": "Data",
+   "label": "Engineering Design Office"
   },
   {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "User",
-   "options": "User",
-   "reqd": 1
+   "fieldname": "site_owner",
+   "fieldtype": "Data",
+   "label": "Owner"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-02 15:10:57.699379",
+ "modified": "2025-08-27 17:09:08.357981",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
- "name": "Client Credentials",
- "naming_rule": "By fieldname",
+ "name": "Ai Site Information Management",
  "owner": "Administrator",
  "permissions": [
   {

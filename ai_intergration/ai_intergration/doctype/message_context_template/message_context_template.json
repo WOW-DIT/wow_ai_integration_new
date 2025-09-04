@@ -8,11 +8,15 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "phone_id",
+  "whatsapp_instance",
+  "column_break_tutbv",
+  "whatsapp_business_id",
+  "section_break_kd48y",
   "title",
   "default_model",
   "llm",
   "column_break_m7duu",
-  "whatsapp_business_id",
   "selected_model",
   "chatgpt_section",
   "gpt_model",
@@ -31,6 +35,7 @@
   "on_error",
   "column_break_saftt",
   "on_completion",
+  "response_fields",
   "integration_section",
   "integration",
   "section_break_en49w",
@@ -45,7 +50,11 @@
   "column_break_zrcfp",
   "auth_token",
   "section_break_u25uy",
-  "json_template"
+  "json_template",
+  "web_search_tab",
+  "web_search",
+  "external_links_template",
+  "search_query"
  ],
  "fields": [
   {
@@ -88,7 +97,7 @@
    "unique": 1
   },
   {
-   "depends_on": "eval: doc.ollama_model === 0",
+   "depends_on": "eval: doc.default_model === 0",
    "fieldname": "llm",
    "fieldtype": "Select",
    "in_list_view": 1,
@@ -116,10 +125,10 @@
    "options": "Reference Targets Table"
   },
   {
+   "fetch_from": "whatsapp_instance.business_id",
    "fieldname": "whatsapp_business_id",
    "fieldtype": "Data",
-   "label": "WhatsApp Business ID",
-   "unique": 1
+   "label": "WhatsApp Business Account ID"
   },
   {
    "fieldname": "integration_section",
@@ -144,7 +153,7 @@
    "depends_on": "eval: doc.integration === 1",
    "description": "https://myserver.com/api/webhook",
    "fieldname": "webhook_uri",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Webhook URI"
   },
   {
@@ -271,11 +280,63 @@
    "fieldname": "default_model",
    "fieldtype": "Check",
    "label": "Default Model"
+  },
+  {
+   "fieldname": "web_search_tab",
+   "fieldtype": "Tab Break",
+   "label": "Web Search"
+  },
+  {
+   "default": "0",
+   "fieldname": "web_search",
+   "fieldtype": "Check",
+   "label": "Web Search"
+  },
+  {
+   "depends_on": "eval: doc.web_search === 1",
+   "fieldname": "external_links_template",
+   "fieldtype": "Link",
+   "label": "External Links Template",
+   "options": "Ai External Link Template"
+  },
+  {
+   "depends_on": "eval: doc.web_search === 1",
+   "fieldname": "search_query",
+   "fieldtype": "Text",
+   "label": "Search Query"
+  },
+  {
+   "fieldname": "response_fields",
+   "fieldtype": "Text",
+   "label": "Response Fields"
+  },
+  {
+   "fetch_from": "whatsapp_instance.phone_id",
+   "fieldname": "phone_id",
+   "fieldtype": "Data",
+   "label": "Phone Number ID",
+   "unique": 1
+  },
+  {
+   "fieldname": "whatsapp_instance",
+   "fieldtype": "Link",
+   "label": "WhatsApp Instance",
+   "options": "WhatsApp Instance",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_kd48y",
+   "fieldtype": "Section Break",
+   "label": "Ai Model"
+  },
+  {
+   "fieldname": "column_break_tutbv",
+   "fieldtype": "Column Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-21 12:53:23.949830",
+ "modified": "2025-09-03 16:46:20.234470",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Message Context Template",

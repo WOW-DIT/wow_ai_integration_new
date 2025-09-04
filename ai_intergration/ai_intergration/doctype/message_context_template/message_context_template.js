@@ -153,6 +153,7 @@ function getModels(frm, is_gpt=false) {
 		method: method,
 		callback: function(r) {
 			if (is_gpt) {
+				console.log(r)
 				const models = [""].concat(r.message);
 				let selected_model = ""
 
@@ -161,13 +162,19 @@ function getModels(frm, is_gpt=false) {
 						selected_model = m
 					}
 				}
+				console.log("11111111111111")
 				console.log(models)
 	
 				frm.set_df_property("gpt_model", "options", models.join("\n"));
+				console.log("2222222222222222")
 				
 				if(selected_model) {
+				console.log("33333333333333333")
+
 					frm.set_value('selected_gpt_model', selected_model);
 				} else {
+				console.log("44444444444444444")
+
 					frm.refresh_field('selected_gpt_model');
 				}
 			} else {

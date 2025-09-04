@@ -7,7 +7,13 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "chat",
+  "responded_to",
+  "type",
+  "column_break_ewjaq",
+  "section_break_a0jq2",
   "role",
+  "image",
   "content"
  ],
  "fields": [
@@ -24,11 +30,44 @@
    "in_list_view": 1,
    "label": "Content",
    "reqd": 1
+  },
+  {
+   "fieldname": "chat",
+   "fieldtype": "Link",
+   "label": "Chat",
+   "options": "Ai Chat",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "responded_to",
+   "fieldtype": "Check",
+   "label": "Responded To"
+  },
+  {
+   "fieldname": "section_break_a0jq2",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "column_break_ewjaq",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "label": "Type",
+   "options": "text\naudio\nimage"
+  },
+  {
+   "depends_on": "eval: doc.type === \"image\"",
+   "fieldname": "image",
+   "fieldtype": "Attach Image",
+   "label": "Image"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-21 11:08:47.107071",
+ "modified": "2025-08-27 13:52:00.677040",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Message",

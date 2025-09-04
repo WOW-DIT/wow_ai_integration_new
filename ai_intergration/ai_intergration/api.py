@@ -9,14 +9,15 @@ from io import BytesIO
 from docx import Document
 import pandas as pd
 from ollama import Client
+from frappe.utils.file_manager import save_file
+from frappe.utils import get_url
+
 
 AI_SYSTEM_PROMPT = """
 Today's Date: {DATE}
 --------------
-Instructions:
+Response Format:
 --------------
-{INSTRUCTIONS}
-
 THE MOST IMPORTANT RULE: return a pure plain JSON string (text not code) containing these fixed main fields:
 1- type:
   A- 'question' if more information is needed.
@@ -34,6 +35,12 @@ THE MOST IMPORTANT RULE: return a pure plain JSON string (text not code) contain
 
 5- json_body: ONLY If the 'type' = 'answer'. The (JSON template) after replacing with new values.
 
+{RESPONSE_FIELDS}
+
+--------------
+Instructions:
+--------------
+{INSTRUCTIONS}
 --------------
 Request Types
 --------------
@@ -83,23 +90,25 @@ def get_models():
 @frappe.whitelist()
 def get_gpt_models():
     try:
-        cred_id = frappe.get_value("Client Credentials", {"user": frappe.session.user})
-        if cred_id:
-            creds = frappe.get_doc("Client Credentials", cred_id)
-        
-            if creds.api_key:
+        # cred_id = frappe.get_value("Client Credentials", {"user": frappe.session.user})
+        # if cred_id:
+            creds = frappe.get_doc("Client Credentials", "Main")
+            api_key = creds.get_password("api_key")
+
+            if api_key:
                 models = []
-                ai_client = OpenAI(api_key=creds.api_key)
+                ai_client = OpenAI(api_key=api_key)
                 response = ai_client.models.list()
 
                 for model in response.data:
                     models.append(model.id)
 
                 return models
+                
     except Exception as e:
         save_response_log(str(e), "001", "001", True)
         
-    frappe.throw("invalid credentials")
+        frappe.throw("invalid credentials")
 
 
 def save_response_log(body, from_number, to_number, is_error=False):
@@ -131,8 +140,73 @@ def get_ai_requests_types(source_template):
     return ",\n".join(strings)
 
 
+def get_external_links(links_template):
+    links_template = frappe.get_doc("Ai External Link Template", links_template)
+    links = links_template.links
+
+    sources = []
+    for l in links:
+        src = frappe.get_doc("Ai External Link", l.source)
+        sources.append({
+            "url": src.url.strip(),
+            "instructions": src.instructions.strip()
+        })
+
+    return sources
+
+
+def web_search(context, chat, links):
+    for link in links:
+        url = link.get("url")
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            page_content = response.text
+            instructions = link.get("instructions")
+
+
+def save_message(chat, role, content, image: dict=None, message_type="text"):
+    message = frappe.new_doc("Ai Message")
+    message.chat = chat
+    message.type = message_type
+    message.role = role
+    message.content = content
+    message.insert(ignore_permissions=True)
+
+    if image:
+        image_content = image.get("content")
+        image_name = image.get("name")
+
+        filedoc = save_file(
+            fname=image_name,
+            content=image_content.getvalue(),
+            dt="Ai Message",
+            dn=message.name,
+            is_private=0
+        )
+
+        message.image = filedoc.file_url
+        message.save(ignore_permissions=True)
+
+    return message
+
+
+def confirm_response(message_id):
+    message = frappe.get_doc("Ai Message", message_id)
+    message.responded_to = 1
+    message.save(ignore_permissions=True)
+
+
 @frappe.whitelist(allow_guest=True)
-def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
+def ai_chat(
+    model,
+    chat_id,
+    message_type,
+    new_message,
+    image: dict=None,
+    to_number=None,
+    stream=False,
+):
     try:
         if not isinstance(new_message, dict):
             new_message = json.loads(new_message)
@@ -140,14 +214,26 @@ def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
         chat = frappe.get_doc("Ai Chat", chat_id)
         context = frappe.get_doc("Message Context Template", chat.context)
         
-        message = frappe.new_doc("Ai Message")
-        message.role = new_message["role"]
-        message.content = new_message["content"]
-        message.insert(ignore_permissions=True)
+        user_message = save_message(
+            chat.name,
+            new_message["role"],
+            new_message["content"],
+            image,
+            message_type,
+        )
+
+        ## Add image to prompt
+        if image:
+            image_url = f"{get_url()}{user_message.image}"
+            text = new_message["content"]
+            new_message["content"] = [
+                {"type": "input_text", "text": text},
+                {"type": "input_image", "image_url": image_url}
+            ]
 
         chat.append(
             "messages",
-            {"message": message.name}
+            {"message": user_message.name}
         )
 
         messages = get_current_messages(chat_id, context)
@@ -168,14 +254,16 @@ def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
 
         ai_message = data.get("response")
 
-        message = frappe.new_doc("Ai Message")
-        message.role = role
-        message.content = content
-        message.insert(ignore_permissions=True)
+
+        resp_message = save_message(
+            chat,
+            role,
+            content,
+        )
 
         chat.append(
             "messages",
-            {"message": message.name}
+            {"message": resp_message.name}
         )
 
         response_type = data.get("type")
@@ -213,20 +301,22 @@ def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
 
                     ai_message = data.get("response")
 
-                    message = frappe.new_doc("Ai Message")
-                    message.role = "system"
-                    message.content = str(query_data)
-                    message.insert(ignore_permissions=True)
+                    message = save_message(
+                        chat,
+                        "system",
+                        str(query_data),
+                    )
 
                     chat.append(
                         "messages",
                         {"message": message.name}
                     )
 
-                    message = frappe.new_doc("Ai Message")
-                    message.role = role
-                    message.content = content
-                    message.insert(ignore_permissions=True)
+                    message = save_message(
+                        chat,
+                        role,
+                        content,
+                    )
 
                     chat.append(
                         "messages",
@@ -238,6 +328,7 @@ def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
             extra_data = post_to_webhook(context, json_body)
         
         chat.save(ignore_permissions=True)
+        confirm_response(user_message.name)
         frappe.db.commit()
         return ai_message
     
@@ -245,6 +336,25 @@ def ai_chat(model, chat_id, new_message, to_number=None, stream=False):
         save_response_log(str(e), "AAAAAAAA", "AAAAAAAAAAAAA")
         return None
 
+
+def speech_to_text(model: str, client_credentials, file_name: str, audio_data: BytesIO):
+    try:
+        creds = frappe.get_doc("Client Credentials", client_credentials)
+        api_key = creds.get_password("api_key")
+
+        ai_client = OpenAI(api_key=api_key)
+
+        with audio_data as f:
+            f.name = file_name
+            
+            transcription = ai_client.audio.transcriptions.create(
+                model=model, 
+                file=f,
+            )
+
+        return transcription.text        
+    except Exception as e:
+        return str(e)
 
 
 def ask_local_ai(model, messages, to_number, stream=False):
@@ -300,19 +410,19 @@ def ask_ollama_ai(model, messages, to_number, stream=False):
 def ask_gpt_ai(model, context, messages, to_number, stream=False):
     try:
         creds = frappe.get_doc("Client Credentials", context.client_credentials)
+        api_key = creds.get_password("api_key")
 
-        if creds.api_key:
-            ai_client = OpenAI(api_key=creds.api_key)
+        if api_key:
+            ai_client = OpenAI(api_key=api_key)
 
-            response = ai_client.chat.completions.create(
+            response = ai_client.responses.create(
                 model=model,
-                messages=messages
+                input=messages,
+                store=False,
             )
-    
-            message = response.choices[0].message
 
-            role = message.role
-            content = message.content
+            role = response.output[0].role
+            content = response.output[0].content[0].text
 
             return {
                 "role": role,
@@ -431,6 +541,9 @@ def get_current_messages(chat_id, context) -> list:
 
     content = AI_SYSTEM_PROMPT
     content = content.replace("{DATE}", datetime.now().strftime("%Y-%m-%d"))
+
+    response_fields = context.response_fields if context.response_fields else ""
+    content = content.replace("{RESPONSE_FIELDS}", response_fields)
 
     if context.integration == 1 and context.source_type:
         if context.source_type == "Link":
@@ -561,9 +674,6 @@ def getAIResponse(mctName, docName):
 
     formattedText += '\n' + mctDoc.user_prompt
 
-    # return formattedText
-    # baseUrl = clientCredentials.base_url
-    # apiUrl = clientCredentials.api_key
     systemPrompt = mctDoc.system_prompt
     userPrompt = formattedText
 

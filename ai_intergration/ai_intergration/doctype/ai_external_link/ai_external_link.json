@@ -1,52 +1,43 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "field:app_name",
- "creation": "2024-10-02 14:12:35.801216",
- "default_view": "List",
+ "creation": "2025-08-24 12:16:51.896389",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "app_name",
-  "user",
-  "column_break_dsc4q",
-  "api_key"
+  "title",
+  "url",
+  "instructions"
  ],
  "fields": [
   {
-   "fieldname": "app_name",
+   "fieldname": "url",
    "fieldtype": "Data",
-   "label": "App Name",
-   "unique": 1
-  },
-  {
-   "fieldname": "api_key",
-   "fieldtype": "Password",
    "in_list_view": 1,
-   "label": "API Key",
+   "label": "URL",
    "reqd": 1
   },
   {
-   "fieldname": "column_break_dsc4q",
-   "fieldtype": "Column Break"
+   "fieldname": "instructions",
+   "fieldtype": "Long Text",
+   "in_list_view": 1,
+   "label": "Instructions",
+   "reqd": 1
   },
   {
-   "fieldname": "user",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "User",
-   "options": "User",
+   "fieldname": "title",
+   "fieldtype": "Data",
+   "label": "Title",
    "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-02 15:10:57.699379",
+ "modified": "2025-08-24 12:43:34.926525",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
- "name": "Client Credentials",
- "naming_rule": "By fieldname",
+ "name": "Ai External Link",
  "owner": "Administrator",
  "permissions": [
   {
@@ -62,7 +53,9 @@
    "write": 1
   }
  ],
+ "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": []
+ "states": [],
+ "title_field": "title"
 }
