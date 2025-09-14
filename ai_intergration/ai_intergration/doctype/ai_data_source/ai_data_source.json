@@ -15,6 +15,7 @@
   "column_break_ztnlr",
   "instructions",
   "section_break_jbsgj",
+  "method",
   "url",
   "auth_type",
   "auth_token",
@@ -117,11 +118,18 @@
    "fieldname": "error_message",
    "fieldtype": "Data",
    "label": "Error Message"
+  },
+  {
+   "fieldname": "method",
+   "fieldtype": "Select",
+   "label": "Method",
+   "options": "GET\nPOST\nPUT\nDELETE",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-14 14:21:47.706166",
+ "modified": "2025-09-10 13:33:04.668583",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Data Source",

@@ -8,13 +8,17 @@
  "engine": "InnoDB",
  "field_order": [
   "chat",
-  "responded_to",
   "type",
+  "responded_to",
   "column_break_ewjaq",
+  "whatsapp_instance",
+  "whatsapp_message_id",
   "section_break_a0jq2",
   "role",
   "image",
-  "content"
+  "message_text",
+  "content",
+  "timestamp"
  ],
  "fields": [
   {
@@ -27,8 +31,8 @@
   {
    "fieldname": "content",
    "fieldtype": "Long Text",
-   "in_list_view": 1,
    "label": "Content",
+   "read_only": 1,
    "reqd": 1
   },
   {
@@ -40,6 +44,7 @@
   },
   {
    "default": "0",
+   "depends_on": "eval: doc.role === \"user\"",
    "fieldname": "responded_to",
    "fieldtype": "Check",
    "label": "Responded To"
@@ -63,11 +68,34 @@
    "fieldname": "image",
    "fieldtype": "Attach Image",
    "label": "Image"
+  },
+  {
+   "fieldname": "whatsapp_message_id",
+   "fieldtype": "Data",
+   "label": "WhatsApp Message ID"
+  },
+  {
+   "fieldname": "message_text",
+   "fieldtype": "Long Text",
+   "label": "Message Text",
+   "read_only": 1
+  },
+  {
+   "fieldname": "timestamp",
+   "fieldtype": "Datetime",
+   "label": "Timestamp"
+  },
+  {
+   "fetch_from": "chat.whatsapp_instance",
+   "fieldname": "whatsapp_instance",
+   "fieldtype": "Link",
+   "label": "WhatsApp Instance",
+   "options": "WhatsApp Instance"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-27 13:52:00.677040",
+ "modified": "2025-09-14 13:19:05.449747",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Message",

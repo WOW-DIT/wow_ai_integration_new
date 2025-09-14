@@ -130,14 +130,22 @@ def get_ai_requests_types(source_template):
         src = frappe.get_doc("Ai Data Source", s.source)
         
         strings.append(f"""{{
-        "when": "{src.when.strip()}",
+        "when": "{src.when.strip() if src.when else ""}",
+        "method": "{src.method.strip()}",
         "url": "{src.get_full_url()}",
-        "auth_type": "{src.auth_type.strip()}",
-        "auth_token": "{src.auth_token.strip()}",
-        "instructions": "{src.instructions.strip()}"
+        "auth_type": "{src.auth_type.strip() if src.auth_type else ""}",
+        "auth_token": "{src.auth_token.strip() if src.auth_token else ""}",
+        "instructions": "{src.instructions.strip() if src.instructions else ""}"
     }}""")
 
-    return ",\n".join(strings)
+    requests = ",\n".join(strings)
+
+    save_response_log(
+        str(requests),
+        "-1-1-1-1-1",
+        "-1-1-1-1-1"
+    )
+    return requests
 
 
 def get_external_links(links_template):
@@ -165,12 +173,14 @@ def web_search(context, chat, links):
             instructions = link.get("instructions")
 
 
-def save_message(chat, role, content, image: dict=None, message_type="text"):
+def save_message(chat, role, content, message_text: str=None, image: dict=None, message_type="text", timestamp: datetime=datetime.now()):
     message = frappe.new_doc("Ai Message")
     message.chat = chat
     message.type = message_type
     message.role = role
     message.content = content
+    message.message_text = message_text
+    message.timestamp = timestamp
     message.insert(ignore_permissions=True)
 
     if image:
@@ -203,8 +213,10 @@ def ai_chat(
     chat_id,
     message_type,
     new_message,
+    plain_text: str=None,
     image: dict=None,
     to_number=None,
+    timestamp: datetime=datetime.now(),
     stream=False,
 ):
     try:
@@ -213,13 +225,17 @@ def ai_chat(
 
         chat = frappe.get_doc("Ai Chat", chat_id)
         context = frappe.get_doc("Message Context Template", chat.context)
+
+        is_live = chat.is_live
         
         user_message = save_message(
-            chat.name,
-            new_message["role"],
-            new_message["content"],
-            image,
-            message_type,
+            chat=chat.name,
+            role=new_message["role"],
+            content=new_message["content"],
+            message_text=plain_text,
+            image=image,
+            message_type=message_type,
+            timestamp=timestamp,
         )
 
         ## Add image to prompt
@@ -235,6 +251,13 @@ def ai_chat(
             "messages",
             {"message": user_message.name}
         )
+
+        if is_live:
+            chat.save(ignore_permissions=True)
+            confirm_response(user_message.name)
+            frappe.db.commit()
+            return {"is_live": is_live, "response": plain_text}
+        
 
         messages = get_current_messages(chat_id, context)
         messages.append(new_message)
@@ -254,11 +277,12 @@ def ai_chat(
 
         ai_message = data.get("response")
 
-
         resp_message = save_message(
-            chat,
-            role,
-            content,
+            chat=chat,
+            role=role,
+            content=content,
+            message_text=ai_message,
+            timestamp=timestamp,
         )
 
         chat.append(
@@ -302,9 +326,11 @@ def ai_chat(
                     ai_message = data.get("response")
 
                     message = save_message(
-                        chat,
-                        "system",
-                        str(query_data),
+                        chat=chat,
+                        role="system",
+                        content=str(query_data),
+                        message_text="",
+                        timestamp=timestamp,
                     )
 
                     chat.append(
@@ -313,9 +339,11 @@ def ai_chat(
                     )
 
                     message = save_message(
-                        chat,
-                        role,
-                        content,
+                        chat=chat,
+                        role=role,
+                        content=content,
+                        message_text=ai_message,
+                        timestamp=timestamp,
                     )
 
                     chat.append(
@@ -330,7 +358,7 @@ def ai_chat(
         chat.save(ignore_permissions=True)
         confirm_response(user_message.name)
         frappe.db.commit()
-        return ai_message
+        return {"is_live": is_live, "response": ai_message}
     
     except Exception as e:
         save_response_log(str(e), "AAAAAAAA", "AAAAAAAAAAAAA")
@@ -552,15 +580,17 @@ def get_current_messages(chat_id, context) -> list:
             remote_context = get_file_context(context.sourec_file)
         elif context.source_type == "Text":
             remote_context = context.source_text
+        else:
+            remote_context = ""
 
         if context.source_type == "Template":
             content = content.replace("{REQUEST_TYPES}", get_ai_requests_types(context.source_template))
         else:
             content = content.replace("{CONTEXT}", str(remote_context))
 
-    content = content.replace("{INSTRUCTIONS}", context.system_prompt)
+    content = content.replace("{INSTRUCTIONS}", context.system_prompt or "")
     content = content.replace("{JSON}", context.json_template or "")
-    content = content.replace("{COMPLETION}" or "", context.on_completion)
+    content = content.replace("{COMPLETION}", context.on_completion or "")
     content = content.replace("{ERROR}", context.on_error or "")
     
     messages.append({
@@ -571,10 +601,10 @@ def get_current_messages(chat_id, context) -> list:
     for m in messageDocs:
         messages.append({
             "role": m["role"],
-            "content": m["content"]
+            "content": m["content"],
         })
-    
     return messages
+
 
 @frappe.whitelist()
 def getAIResponse(mctName, docName):

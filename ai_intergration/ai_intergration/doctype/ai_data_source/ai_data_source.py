@@ -14,11 +14,21 @@ class AiDataSource(Document):
 
 		filters = []
 		for filter in self.filters:
-			filters.append(f"{filter.field_name}={{{filter.field_name}}}")
+			example = filter.example if filter.example else filter.field_name
+			filters.append(f"{filter.field_name}={{{example}}}")
 
 		full_url = f"{base_url}?{'&'.join(filters)}"
 
 		return full_url
+
+
+	def get_json_body(self):
+		body = {}
+		for field in self.fields:
+			example = field.example if field.example else field.field_name
+			body[field.field_name] = example
+
+		return body
 
 
 	def fetch_data(self):

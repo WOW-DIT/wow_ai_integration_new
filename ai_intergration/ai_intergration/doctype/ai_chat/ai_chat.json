@@ -1,19 +1,25 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "format:{whatsapp_client_id}-{phone_id}",
  "creation": "2025-03-05 13:05:21.992735",
  "default_view": "List",
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "model",
   "label",
-  "selected_model",
+  "model",
   "column_break_syeqp",
+  "selected_model",
   "context",
+  "is_live",
+  "whatsapp_details_section",
+  "whatsapp_instance",
   "whatsapp_business_id",
+  "column_break_vlfbu",
   "whatsapp_client_id",
+  "phone_id",
   "section_break_ije9r",
   "messages",
   "section_break_vchlu",
@@ -69,6 +75,7 @@
    "reqd": 1
   },
   {
+   "fetch_from": "whatsapp_instance.business_id",
    "fieldname": "whatsapp_business_id",
    "fieldtype": "Data",
    "label": "WhatsApp Business ID"
@@ -90,15 +97,44 @@
    "collapsible": 1,
    "fieldname": "section_break_vchlu",
    "fieldtype": "Section Break",
+   "hidden": 1,
    "label": "Local"
+  },
+  {
+   "fieldname": "whatsapp_details_section",
+   "fieldtype": "Section Break",
+   "label": "WhatsApp Details"
+  },
+  {
+   "fieldname": "whatsapp_instance",
+   "fieldtype": "Link",
+   "label": "WhatsApp Instance",
+   "options": "WhatsApp Instance"
+  },
+  {
+   "fieldname": "column_break_vlfbu",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "whatsapp_instance.phone_id",
+   "fieldname": "phone_id",
+   "fieldtype": "Data",
+   "label": "Phone ID"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_live",
+   "fieldtype": "Check",
+   "label": "Live"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-12 11:27:37.423218",
+ "modified": "2025-09-14 11:37:20.222078",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Chat",
+ "naming_rule": "Expression",
  "owner": "Administrator",
  "permissions": [
   {
@@ -114,9 +150,7 @@
    "write": 1
   }
  ],
- "show_title_field_in_link": 1,
  "sort_field": "modified",
  "sort_order": "DESC",
- "states": [],
- "title_field": "whatsapp_client_id"
+ "states": []
 }
