@@ -4,7 +4,7 @@
 import frappe
 from frappe.model.document import Document
 
-class MessageContextTemplate(Document):
+class AIAgent(Document):
 
 	def validate(self):
 		

@@ -71,7 +71,7 @@
    "fieldname": "context",
    "fieldtype": "Link",
    "label": "Context",
-   "options": "Message Context Template",
+   "options": "AI Agent",
    "reqd": 1
   },
   {
@@ -130,7 +130,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-14 11:37:20.222078",
+ "modified": "2025-09-30 17:16:18.461619",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Chat",

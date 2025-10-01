@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"id\":\"S0khGc5R3j\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">WOWAI</span>\",\"col\":12}},{\"id\":\"VuxQgmBqNr\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI Admin\",\"col\":4}},{\"id\":\"IiMUrUUqlp\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI User\",\"col\":4}},{\"id\":\"U1e71Spse7\",\"type\":\"card\",\"data\":{\"card_name\":\"Pr\",\"col\":4}}]",
+ "content": "[{\"id\":\"S0khGc5R3j\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">WOWAI</span>\",\"col\":12}},{\"id\":\"VuxQgmBqNr\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI Admin\",\"col\":4}},{\"id\":\"IiMUrUUqlp\",\"type\":\"card\",\"data\":{\"card_name\":\"WOWAI User\",\"col\":4}}]",
  "creation": "2025-03-13 11:18:30.945996",
  "custom_blocks": [],
  "docstatus": 0,
@@ -12,35 +12,6 @@
  "is_hidden": 0,
  "label": "WOWAI",
  "links": [
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "WOWAI Admin",
-   "link_count": 2,
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Card Break"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "LLM",
-   "link_count": 0,
-   "link_to": "LLM",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
-  {
-   "hidden": 0,
-   "is_query_report": 0,
-   "label": "Message Context Template",
-   "link_count": 0,
-   "link_to": "Message Context Template",
-   "link_type": "DocType",
-   "onboard": 0,
-   "type": "Link"
-  },
   {
    "hidden": 0,
    "is_query_report": 0,
@@ -73,8 +44,8 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "Pr",
-   "link_count": 1,
+   "label": "WOWAI Admin",
+   "link_count": 2,
    "link_type": "DocType",
    "onboard": 0,
    "type": "Card Break"
@@ -82,15 +53,25 @@
   {
    "hidden": 0,
    "is_query_report": 0,
-   "label": "ai-ref4",
+   "label": "LLM",
    "link_count": 0,
-   "link_to": "ai-ref4",
+   "link_to": "LLM",
+   "link_type": "DocType",
+   "onboard": 0,
+   "type": "Link"
+  },
+  {
+   "hidden": 0,
+   "is_query_report": 0,
+   "label": "AI Agents",
+   "link_count": 0,
+   "link_to": "AI Agent",
    "link_type": "DocType",
    "onboard": 0,
    "type": "Link"
   }
  ],
- "modified": "2025-08-24 11:55:56.297643",
+ "modified": "2025-10-01 16:06:51.187125",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "WOWAI",
@@ -100,7 +81,7 @@
  "public": 1,
  "quick_lists": [],
  "roles": [],
- "sequence_id": 9.0,
+ "sequence_id": 18.0,
  "shortcuts": [],
  "title": "WOWAI"
 }

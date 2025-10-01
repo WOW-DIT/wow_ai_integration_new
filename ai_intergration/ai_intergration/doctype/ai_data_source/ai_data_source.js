@@ -10,16 +10,27 @@ frappe.ui.form.on('Ai Data Source', {
 			if(!frm.doc.url) {
 				frappe.throw("URL is required")
 			}
+			let params = [];
+			for(let i = 0; i < frm.doc.filters.length; i++) {
+				const param = frm.doc.filters[i];
+				params.push(param.field_name)
+			}
+
+			console.log(params)
+
 			frappe.call({
 				method: "ai_intergration.ai_intergration.doctype.ai_data_source.ai_data_source.verify_url",
 				args: {
 					url: frm.doc.url,
+					method: frm.doc.method,
 					auth_token: frm.doc.auth_token,
 					auth_type: frm.doc.auth_type,
+					params: params,
 				},
 				callback: function(res) {
-					frm.set_value("verified", res.message)
-					if(res.message) {
+					console.log(res.message)
+					frm.set_value("verified", res.message.success)
+					if(res.message.success) {
 						frm.save()
 					}
 				}

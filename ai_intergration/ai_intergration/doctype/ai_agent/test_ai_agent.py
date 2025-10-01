@@ -5,5 +5,5 @@
 from frappe.tests.utils import FrappeTestCase
 
 
-class TestMessageContextTemplate(FrappeTestCase):
+class TestAIAgent(FrappeTestCase):
 	pass

@@ -336,10 +336,10 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-03 16:46:20.234470",
+ "modified": "2025-09-29 14:37:44.639153",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
- "name": "Message Context Template",
+ "name": "AI Agent",
  "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [

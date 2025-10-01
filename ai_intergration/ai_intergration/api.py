@@ -20,9 +20,9 @@ Response Format:
 --------------
 THE MOST IMPORTANT RULE: return a pure plain JSON string (text not code) containing these fixed main fields:
 1- type:
-  A- 'question' if more information is needed.
-  B- 'request' if the user provided some information and 'Context Data' section is empty, example: car model, and you need to fetch more data to availability, or answer some questions.
-  C- 'answer' if no more information is needed from the user side, and it's the confirmation message after updating or creating an appointment.
+  A- 'question' ONLY if more information is needed.
+  B- 'request' ONLY if the user provided some information and you need to get more information from the server or database, example: car model, and you need to fetch more data to availability, or answer some questions.
+  C- 'answer' ONLY if no more information is needed from the user side, then you will do an action like making an appointment, and you will do a post request using the JSON template.
 
 2- response: 
   A- if the 'type' = 'question', respond to the user to provide more information.
@@ -133,6 +133,7 @@ def get_ai_requests_types(source_template):
         "when": "{src.when.strip() if src.when else ""}",
         "method": "{src.method.strip()}",
         "url": "{src.get_full_url()}",
+        "body": {src.get_json_body()},
         "auth_type": "{src.auth_type.strip() if src.auth_type else ""}",
         "auth_token": "{src.auth_token.strip() if src.auth_token else ""}",
         "instructions": "{src.instructions.strip() if src.instructions else ""}"
@@ -224,7 +225,7 @@ def ai_chat(
             new_message = json.loads(new_message)
 
         chat = frappe.get_doc("Ai Chat", chat_id)
-        context = frappe.get_doc("Message Context Template", chat.context)
+        context = frappe.get_doc("AI Agent", chat.context)
 
         is_live = chat.is_live
         
@@ -352,6 +353,8 @@ def ai_chat(
                     )
 
         if response_type == "answer" and context.integration == 1 and context.webhook_uri:
+            save_response_log(str(data), "PAPAPAPAPAPAP", "PAPAPAPAPAPAP")
+
             json_body = data.get("json_body")
             extra_data = post_to_webhook(context, json_body)
         
@@ -599,8 +602,9 @@ def get_current_messages(chat_id, context) -> list:
     })
 
     for m in messageDocs:
+        role = m["role"] if (m["role"] == "assistant" or m["role"] == "user") else "assistant"
         messages.append({
-            "role": m["role"],
+            "role": role,
             "content": m["content"],
         })
     return messages
@@ -609,14 +613,14 @@ def get_current_messages(chat_id, context) -> list:
 @frappe.whitelist()
 def getAIResponse(mctName, docName):
     """
-    Generate a response from OpenAI's chat model based on a message context template and a target document.
+    Generate a response from OpenAI's chat model based on a AI Agent and a target document.
 
-    This function retrieves a message context template and the relevant target document from Frappe.
+    This function retrieves a AI Agent and the relevant target document from Frappe.
     It formats the text according to the specified fields and sends a prompt to the OpenAI API 
     to generate a response based on the provided system prompt and user prompt.
 
     Parameters:
-        mctName (str): The name of the Message Context Template from which to retrieve formatting and prompts.
+        mctName (str): The name of the AI Agent from which to retrieve formatting and prompts.
         docName (str): The name of the target document from which to retrieve field values.
 
     Returns:
@@ -625,7 +629,7 @@ def getAIResponse(mctName, docName):
     Raises:
         frappe.ValidationError: If there is an issue with account credentials while calling the OpenAI API.
     """
-    mctDoc = frappe.get_doc('Message Context Template', mctName)
+    mctDoc = frappe.get_doc('AI Agent', mctName)
     targetDocument = frappe.get_doc(mctDoc.target_doctype, docName)
 
     formattedText = ''

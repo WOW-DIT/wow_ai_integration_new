@@ -4,6 +4,7 @@
 import frappe
 from frappe.model.document import Document
 import requests
+import json
 
 class AiDataSource(Document):
 	def validate(self):
@@ -11,6 +12,9 @@ class AiDataSource(Document):
 
 	def get_full_url(self):
 		base_url = self.url
+
+		if self.method == "POST":
+			return base_url
 
 		filters = []
 		for filter in self.filters:
@@ -24,7 +28,10 @@ class AiDataSource(Document):
 
 	def get_json_body(self):
 		body = {}
-		for field in self.fields:
+		if self.method == "POST":
+			return body
+		
+		for field in self.filters:
 			example = field.example if field.example else field.field_name
 			body[field.field_name] = example
 
@@ -54,19 +61,39 @@ class AiDataSource(Document):
 
 
 @frappe.whitelist()
-def verify_url(url, auth_token=None, auth_type=None):
+def verify_url(url, method="GET", auth_token=None, auth_type=None, params=None):
 	try:
+		if params:
+			params = json.loads(params)
+		else:
+			params = {}
+
 		headers = {
 			"Content-Type": "application/json"
 		}
+
 		if auth_type and auth_token:
 			headers["Authorization"] = f"{auth_type} {auth_token}"
 
-		response = requests.get(url, headers=headers, timeout=5)
-	
-		return response.status_code == 200
-	
-	except:
-		return False
-	
-	
+		if method == "GET":
+			body = {"test": True}
+			for param in params:
+				body[param] = param
+
+			response = requests.get(url, headers=headers, params=body, timeout=5)
+
+		elif method == "POST":
+			body = {"test": True}
+			for param in params:
+				body[param] = param
+
+			response = requests.post(url, headers=headers, json=body, timeout=5)
+
+		else:
+			return {"success": False, "error": f"Unsupported method: {method}"}
+		
+		return {"success": response.status_code == 200, "status_code": response.status_code}
+
+
+	except Exception as e:
+		return {"success": False, "error": str(e)}

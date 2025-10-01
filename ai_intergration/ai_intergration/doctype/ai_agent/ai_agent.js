@@ -3,7 +3,7 @@
 
 var linkedDoctypes = {};
 
-frappe.ui.form.on('Message Context Template', {
+frappe.ui.form.on('AI Agent', {
 	 refresh: function(frm , cdt , cdn) {
 		if(frm.doc.target_doctype != null && frm.doc.target_doctype != ''){
 			getEventDoctypes(frm,cdt,cdn)

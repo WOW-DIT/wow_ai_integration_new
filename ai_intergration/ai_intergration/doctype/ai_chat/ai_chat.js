@@ -3,7 +3,12 @@
 
 frappe.ui.form.on('Ai Chat', {
 	refresh: function(frm) {
-		// getModels(frm)
+		if(!frm.doc.name.startsWith("new")) {
+			frm.add_custom_button("Go Live", () => {
+				startLiveSession(frm);
+			}).addClass("btn-primary");
+		}
+
 	},
 	model: function(frm) {
 		if(frm.doc.model) {
@@ -37,6 +42,21 @@ frappe.ui.form.on('Ai Chat', {
 		}
 	}
 });
+
+
+function startLiveSession(frm) {
+	frappe.call({
+		method: "whatsapp_integration.whatsapp_integration.doctype.whatsapp_live_chat.whatsapp_live_chat.start_live_session",
+		args: {
+			chat_id: frm.doc.name
+		},
+		callback: function(r) {
+			if(r.message.success) {
+				location.href = r.message.url;
+			}
+		}
+	})
+}
 
 
 function getModels(frm) {
