@@ -8,11 +8,13 @@
  "engine": "InnoDB",
  "field_order": [
   "chat",
+  "channel_type",
   "type",
   "responded_to",
   "column_break_ewjaq",
   "whatsapp_instance",
   "whatsapp_message_id",
+  "instagram_instance",
   "section_break_a0jq2",
   "role",
   "image",
@@ -25,6 +27,7 @@
    "fieldname": "role",
    "fieldtype": "Data",
    "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Role",
    "reqd": 1
   },
@@ -38,6 +41,7 @@
   {
    "fieldname": "chat",
    "fieldtype": "Link",
+   "in_standard_filter": 1,
    "label": "Chat",
    "options": "Ai Chat",
    "reqd": 1
@@ -60,7 +64,8 @@
   {
    "fieldname": "type",
    "fieldtype": "Select",
-   "label": "Type",
+   "in_standard_filter": 1,
+   "label": "Message Type",
    "options": "text\naudio\nimage"
   },
   {
@@ -70,9 +75,11 @@
    "label": "Image"
   },
   {
+   "depends_on": "eval: doc.channel_type === \"WhatsApp\"",
    "fieldname": "whatsapp_message_id",
    "fieldtype": "Data",
-   "label": "WhatsApp Message ID"
+   "label": "WhatsApp Message ID",
+   "read_only": 1
   },
   {
    "fieldname": "message_text",
@@ -86,16 +93,34 @@
    "label": "Timestamp"
   },
   {
+   "depends_on": "eval: doc.channel_type === \"WhatsApp\"",
    "fetch_from": "chat.whatsapp_instance",
    "fieldname": "whatsapp_instance",
    "fieldtype": "Link",
    "label": "WhatsApp Instance",
+   "mandatory_depends_on": "eval: doc.channel_type === \"WhatsApp\"",
    "options": "WhatsApp Instance"
+  },
+  {
+   "fetch_from": "chat.channel_type",
+   "fieldname": "channel_type",
+   "fieldtype": "Select",
+   "label": "Channel Type",
+   "options": "WhatsApp\nInstagram\nFacebook\nTelegram"
+  },
+  {
+   "depends_on": "eval: doc.channel_type === \"Instagram\"",
+   "fetch_from": "chat.instagram_instance",
+   "fieldname": "instagram_instance",
+   "fieldtype": "Link",
+   "label": "Instagram Instance",
+   "mandatory_depends_on": "eval: doc.channel_type === \"Instagram\"",
+   "options": "Instagram Instance"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-14 13:19:05.449747",
+ "modified": "2025-10-07 11:45:08.851405",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Message",

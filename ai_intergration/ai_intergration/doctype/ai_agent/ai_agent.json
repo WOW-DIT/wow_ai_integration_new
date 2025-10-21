@@ -8,10 +8,6 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "phone_id",
-  "whatsapp_instance",
-  "column_break_tutbv",
-  "whatsapp_business_id",
   "section_break_kd48y",
   "title",
   "default_model",
@@ -24,18 +20,36 @@
   "column_break_prrpj",
   "client_credentials",
   "selected_gpt_model",
+  "whatsapp_details_section",
+  "whatsapp_instance",
+  "phone_id",
+  "column_break_bvww",
+  "whatsapp_business_id",
+  "instagram_details_section",
+  "instagram_instance",
+  "ig_id",
   "section_break_ma8hx",
   "target_doctype",
   "text_format",
   "reference_targets",
   "context_children",
   "personalization_section",
+  "section_break_tpor",
   "user_prompt",
   "system_prompt",
   "on_error",
   "column_break_saftt",
   "on_completion",
   "response_fields",
+  "agent_properties_section",
+  "agent_name",
+  "behavior",
+  "social_links",
+  "column_break_bctg",
+  "working_at",
+  "senarios",
+  "required_information",
+  "optional_information",
   "integration_section",
   "integration",
   "section_break_en49w",
@@ -51,6 +65,14 @@
   "auth_token",
   "section_break_u25uy",
   "json_template",
+  "ecommerce_integration_tab",
+  "platform",
+  "salla_section",
+  "is_salla",
+  "salla_store",
+  "zid_section",
+  "is_zid",
+  "zid_store",
   "web_search_tab",
   "web_search",
   "external_links_template",
@@ -321,8 +343,7 @@
    "fieldname": "whatsapp_instance",
    "fieldtype": "Link",
    "label": "WhatsApp Instance",
-   "options": "WhatsApp Instance",
-   "reqd": 1
+   "options": "WhatsApp Instance"
   },
   {
    "fieldname": "section_break_kd48y",
@@ -330,13 +351,134 @@
    "label": "Ai Model"
   },
   {
-   "fieldname": "column_break_tutbv",
+   "fieldname": "instagram_instance",
+   "fieldtype": "Link",
+   "label": "Instagram Instance",
+   "options": "Instagram Instance"
+  },
+  {
+   "fieldname": "column_break_bvww",
    "fieldtype": "Column Break"
+  },
+  {
+   "fetch_from": "instagram_instance.user_id",
+   "fieldname": "ig_id",
+   "fieldtype": "Data",
+   "label": "IG ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "whatsapp_details_section",
+   "fieldtype": "Section Break",
+   "label": "WhatsApp Details"
+  },
+  {
+   "fieldname": "instagram_details_section",
+   "fieldtype": "Section Break",
+   "label": "Instagram Details"
+  },
+  {
+   "fieldname": "agent_name",
+   "fieldtype": "Data",
+   "label": "Agent Name"
+  },
+  {
+   "fieldname": "senarios",
+   "fieldtype": "Long Text",
+   "label": "Senarios"
+  },
+  {
+   "fieldname": "column_break_bctg",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "behavior",
+   "fieldtype": "Long Text",
+   "label": "Behavior"
+  },
+  {
+   "fieldname": "social_links",
+   "fieldtype": "Long Text",
+   "label": "Social Links"
+  },
+  {
+   "fieldname": "section_break_tpor",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "working_at",
+   "fieldtype": "Data",
+   "label": "Working At"
+  },
+  {
+   "fieldname": "required_information",
+   "fieldtype": "Long Text",
+   "label": "Required Information"
+  },
+  {
+   "fieldname": "optional_information",
+   "fieldtype": "Long Text",
+   "label": "Optional Information"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "agent_properties_section",
+   "fieldtype": "Section Break",
+   "label": "Agent Properties"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_salla",
+   "fieldtype": "Check",
+   "label": "Is Salla"
+  },
+  {
+   "fieldname": "salla_store",
+   "fieldtype": "Link",
+   "label": "Salla Store",
+   "mandatory_depends_on": "eval: doc.is_salla === 1",
+   "options": "Salla Integration"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_zid",
+   "fieldtype": "Check",
+   "label": "Is Zid"
+  },
+  {
+   "fieldname": "zid_store",
+   "fieldtype": "Link",
+   "label": "Zid Store",
+   "mandatory_depends_on": "eval: doc.is_zid === 1",
+   "options": "Zid Integration"
+  },
+  {
+   "fieldname": "ecommerce_integration_tab",
+   "fieldtype": "Tab Break",
+   "label": "ECommerce Integration"
+  },
+  {
+   "fieldname": "platform",
+   "fieldtype": "Select",
+   "label": "Platform",
+   "options": "\nSalla\nZid"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "salla_section",
+   "fieldtype": "Section Break",
+   "label": "Salla"
+  },
+  {
+   "collapsible": 1,
+   "fieldname": "zid_section",
+   "fieldtype": "Section Break",
+   "label": "Zid"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-29 14:37:44.639153",
+ "modified": "2025-10-15 16:40:31.153560",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "AI Agent",

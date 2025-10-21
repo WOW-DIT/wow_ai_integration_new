@@ -8,6 +8,9 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "column_break_eyff",
+  "customer_id",
+  "section_break_ehmw",
   "data_source_table"
  ],
  "fields": [
@@ -24,11 +27,26 @@
    "label": "Data Source Table",
    "options": "Ai Data Source Table",
    "reqd": 1
+  },
+  {
+   "fieldname": "customer_id",
+   "fieldtype": "Link",
+   "label": "Customer ID",
+   "options": "Connectly Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_eyff",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_ehmw",
+   "fieldtype": "Section Break"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-08-14 14:21:26.898091",
+ "modified": "2025-10-20 15:15:19.802346",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Data Source Template",

@@ -1,16 +1,20 @@
 # Copyright (c) 2024, yazan sorour and contributors
 # For license information, please see license.txt
 
+from frappe import _
 import frappe
 from frappe.model.document import Document
 
 class AIAgent(Document):
 
 	def validate(self):
-		
+		# self.validate_instance()
 		self.setChildren()
 		self.validateReferences()
 				
+	def validate_instance(self):
+		if not self.whatsapp_instance and not self.instagram_instance:
+			frappe.throw(_("Choose at least one Instance"))
 
 	def setChildren(self):
 		self.context_children = []

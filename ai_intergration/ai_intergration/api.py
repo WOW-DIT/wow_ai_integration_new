@@ -16,24 +16,28 @@ from frappe.utils import get_url
 AI_SYSTEM_PROMPT = """
 Today's Date: {DATE}
 --------------
+Main Mission:
+--------------
+You are a very smart Ai agent that recieve messages from users from different social medial channels, such as WhatsApp, Instagram, Facebook, and Telegram.
+You can send either 'text', 'image', or 'document' in a reply using resources you have.
+
+If you want to reply with a link, check the type of link if it's pdf, then set 'message_type' field to 'document'.
+If you want to reply with a link, check the type of link if it's png/jpg/jpeg or any type of image, then set 'message_type' field to 'image'.
+If 'message_type' field is 'image' or 'document', don't include the image or pdf file in the main 'response' field.
+--------------
 Response Format:
 --------------
-THE MOST IMPORTANT RULE: return a pure plain JSON string (text not code) containing these fixed main fields:
-1- type:
-  A- 'question' ONLY if more information is needed.
-  B- 'request' ONLY if the user provided some information and you need to get more information from the server or database, example: car model, and you need to fetch more data to availability, or answer some questions.
-  C- 'answer' ONLY if no more information is needed from the user side, then you will do an action like making an appointment, and you will do a post request using the JSON template.
+STRICT RULES:
+If your response contains a pdf link, then set 'message_type' = 'document' and add your own creative short caption.
+If your response contains an image link that has extension png/jpg/jpeg, then set 'message_type' = 'image  and add your own creative short caption.
+If yuor 'message_type' field is not 'text', don't include the link in the main 'response' field
 
-2- response: 
-  A- if the 'type' = 'question', respond to the user to provide more information.
-  B- if the 'type' = 'request', then provide some waiting message to the user based on the context.
-  C- if the 'type' = 'answer', confirmation message with utilities such as order or transaction id, date, etc... .
+{MAIN_RULES}
 
-3- client_number: VERY IMPORTANT to be able to respond to the user.
-
-4- request: ONLY If the 'type' = 'request'. The (Request Template). This is a dynamic nested JSON object after replacing the variables or placeholders.
-
-5- json_body: ONLY If the 'type' = 'answer'. The (JSON template) after replacing with new values.
+STRICT RULES:
+If your response contains a pdf link, then set 'message_type' = 'document' and add your own creative short caption.
+If your response contains an image link that has extension png/jpg/jpeg, then set 'message_type' = 'image  and add your own creative short caption.
+If yuor 'message_type' field is not 'text', don't include the link in the main 'response' field
 
 {RESPONSE_FIELDS}
 
@@ -111,10 +115,10 @@ def get_gpt_models():
         frappe.throw("invalid credentials")
 
 
-def save_response_log(body, from_number, to_number, is_error=False):
+def save_response_log(body, from_number, to_account, is_error=False):
     log = frappe.new_doc("WhatsApp Logs")
     log.from_number = from_number
-    log.to_number = to_number
+    log.to_number = to_account
     log.method = "Sent"
     log.timestamp = datetime.now()
     log.body = body
@@ -216,7 +220,7 @@ def ai_chat(
     new_message,
     plain_text: str=None,
     image: dict=None,
-    to_number=None,
+    to_account=None,
     timestamp: datetime=datetime.now(),
     stream=False,
 ):
@@ -239,6 +243,8 @@ def ai_chat(
             timestamp=timestamp,
         )
 
+        new_messages = []
+
         ## Add image to prompt
         if image:
             image_url = f"{get_url()}{user_message.image}"
@@ -248,10 +254,19 @@ def ai_chat(
                 {"type": "input_image", "image_url": image_url}
             ]
 
-        chat.append(
-            "messages",
-            {"message": user_message.name}
-        )
+        new_messages.append({
+            "role": user_message.role,
+            "message_text": user_message.message_text,
+            "content": user_message.content,
+        })
+        # chat.append(
+        #     "messages",
+        #     {
+        #         "role": user_message.role,
+        #         "message_text": user_message.message_text,
+        #         "content": user_message.content,
+        #     }
+        # )
 
         if is_live:
             chat.save(ignore_permissions=True)
@@ -264,11 +279,11 @@ def ai_chat(
         messages.append(new_message)
             
         if context.override_model == 1:
-            ai_response = ask_gpt_ai(model, context, messages, to_number)
+            ai_response = ask_gpt_ai(model, context, messages, to_account)
         elif context.default_model == 1:
-            ai_response = ask_ollama_ai(model, messages, to_number)
+            ai_response = ask_ollama_ai(model, messages, to_account)
         else:
-            ai_response = ask_local_ai(model, messages, to_number)
+            ai_response = ask_local_ai(model, messages, to_account)
 
         role = ai_response.get("role")
         content = ai_response.get("content")
@@ -277,6 +292,10 @@ def ai_chat(
         data = json.loads(content)
 
         ai_message = data.get("response")
+        ai_message_type = data.get("message_type", "text")
+        ai_message_file_link = data.get("file_link")
+        ai_message_caption = data.get("caption")
+
 
         resp_message = save_message(
             chat=chat,
@@ -286,10 +305,19 @@ def ai_chat(
             timestamp=timestamp,
         )
 
-        chat.append(
-            "messages",
-            {"message": resp_message.name}
-        )
+        new_messages.append({
+            "role": resp_message.role,
+            "message_text": resp_message.message_text,
+            "content": resp_message.content,
+        })
+        # chat.append(
+        #     "messages",
+        #     {
+        #         "role": resp_message.role,
+        #         "message_text": resp_message.message_text,
+        #         "content": resp_message.content,
+        #     }
+        # )
 
         response_type = data.get("type")
 
@@ -301,11 +329,13 @@ def ai_chat(
             request_data = data.get("request")
 
             if request_data:
+                method = request_data.get("method")
                 url = request_data.get("url")
+                body = request_data.get("body")
                 auth_type = request_data.get("auth_type")
                 auth_token = request_data.get("auth_token")
 
-                query_data = get_online_data(url, auth_type, auth_token)
+                query_data = make_ai_request(method, url, body, auth_type, auth_token)
                 if query_data:
                     messages.append({
                         "role": "system",
@@ -313,11 +343,11 @@ def ai_chat(
                     })
 
                     if context.override_model == 1:
-                        ai_response = ask_gpt_ai(model, context, messages, to_number)
+                        ai_response = ask_gpt_ai(model, context, messages, to_account)
                     elif context.default_model == 1:
-                        ai_response = ask_ollama_ai(model, messages, to_number)
+                        ai_response = ask_ollama_ai(model, messages, to_account)
                     else:
-                        ai_response = ask_local_ai(model, messages, to_number)
+                        ai_response = ask_local_ai(model, messages, to_account)
 
                     role = ai_response.get("role")
                     content = ai_response.get("content")
@@ -334,10 +364,19 @@ def ai_chat(
                         timestamp=timestamp,
                     )
 
-                    chat.append(
-                        "messages",
-                        {"message": message.name}
-                    )
+                    new_messages.append({
+                        "role": message.role,
+                        "message_text": message.message_text,
+                        "content": message.content,
+                    })
+                    # chat.append(
+                    #     "messages",
+                    #     {
+                    #         "role": message.role,
+                    #         "message_text": message.message_text,
+                    #         "content": message.content,
+                    #     }
+                    # )
 
                     message = save_message(
                         chat=chat,
@@ -347,48 +386,172 @@ def ai_chat(
                         timestamp=timestamp,
                     )
 
-                    chat.append(
-                        "messages",
-                        {"message": message.name}
-                    )
+                    new_messages.append({
+                        "role": message.role,
+                        "message_text": message.message_text,
+                        "content": message.content,
+                    })
+                    # chat.append(
+                    #     "messages",
+                    #     {
+                    #         "role": message.role,
+                    #         "message_text": message.message_text,
+                    #         "content": message.content,
+                    #     }
+                    # )
 
         if response_type == "answer" and context.integration == 1 and context.webhook_uri:
-            save_response_log(str(data), "PAPAPAPAPAPAP", "PAPAPAPAPAPAP")
 
             json_body = data.get("json_body")
             extra_data = post_to_webhook(context, json_body)
         
+        chat.reload()
+        for msg in new_messages:
+            chat.append(
+                "messages",
+                msg,
+            )
         chat.save(ignore_permissions=True)
         confirm_response(user_message.name)
         frappe.db.commit()
-        return {"is_live": is_live, "response": ai_message}
+        
+        return {
+            "is_live": is_live,
+            "response": ai_message,
+            "message_type": ai_message_type,
+            "file_link": ai_message_file_link,
+            "caption": ai_message_caption,
+        }
     
     except Exception as e:
         save_response_log(str(e), "AAAAAAAA", "AAAAAAAAAAAAA")
         return None
 
 
-def speech_to_text(model: str, client_credentials, file_name: str, audio_data: BytesIO):
+@frappe.whitelist(allow_guest=True)
+def ai_comment(
+    model,
+    context_id,
+    new_message,
+    to_account=None,
+    timestamp: datetime=datetime.now(),
+    stream=False,
+):
     try:
-        creds = frappe.get_doc("Client Credentials", client_credentials)
-        api_key = creds.get_password("api_key")
+        if not isinstance(new_message, dict):
+            new_message = json.loads(new_message)
 
-        ai_client = OpenAI(api_key=api_key)
+        context = frappe.get_doc("AI Agent", context_id)
 
-        with audio_data as f:
-            f.name = file_name
+        messages = get_current_messages(None, context, False)
+        messages.append(new_message)
             
-            transcription = ai_client.audio.transcriptions.create(
-                model=model, 
-                file=f,
-            )
+        if context.override_model == 1:
+            ai_response = ask_gpt_ai(model, context, messages, to_account)
+        elif context.default_model == 1:
+            ai_response = ask_ollama_ai(model, messages, to_account)
+        else:
+            ai_response = ask_local_ai(model, messages, to_account)
 
-        return transcription.text        
+        role = ai_response.get("role")
+        content = ai_response.get("content")
+        content = content.replace("```json", "").replace("```", "")
+
+        data = json.loads(content)
+
+        ai_message = data.get("response")
+
+        response_type = data.get("type")
+
+        extra_data = None
+        if response_type == "request" and context.integration == 1 and context.source_type == "Template":
+            ## I want to get data from API and then embed it in the system prmopt or
+            ## send a new hidden user message to the llm
+            request_data = data.get("request")
+
+            if request_data:
+                method = request_data.get("method")
+                url = request_data.get("url")
+                body = request_data.get("body")
+                auth_type = request_data.get("auth_type")
+                auth_token = request_data.get("auth_token")
+
+                query_data = make_ai_request(method, url, body, auth_type, auth_token)
+                if query_data:
+                    messages.append({
+                        "role": "system",
+                        "content": str(query_data),
+                    })
+
+                    if context.override_model == 1:
+                        ai_response = ask_gpt_ai(model, context, messages, to_account)
+                    elif context.default_model == 1:
+                        ai_response = ask_ollama_ai(model, messages, to_account)
+                    else:
+                        ai_response = ask_local_ai(model, messages, to_account)
+
+                    role = ai_response.get("role")
+                    content = ai_response.get("content")
+
+                    data = json.loads(content)
+                    ai_message = data.get("response")
+
+
+        if response_type == "answer" and context.integration == 1 and context.webhook_uri:
+            save_response_log(str(data), "PAPAPAPAPAPAP", "PAPAPAPAPAPAP")
+
+            json_body = data.get("json_body")
+            extra_data = post_to_webhook(context, json_body)
+
+        return {"response": ai_message}
+    
     except Exception as e:
-        return str(e)
+        save_response_log(str(e), "AAAAAAAA", "AAAAAAAAAAAAA")
+        return None
+    
+
+def speech_to_text(model: str, client_credentials, file_name: str, audio_data: BytesIO):
+    creds = frappe.get_doc("Client Credentials", client_credentials)
+    api_key = creds.get_password("api_key")
+
+    ai_client = OpenAI(api_key=api_key)
+
+    with audio_data as f:
+        f.name = file_name
+        
+        transcription = ai_client.audio.transcriptions.create(
+            model=model, 
+            file=f,
+        )
+
+    return transcription.text
+    
+
+def text_to_speech(model: str, client_credentials, text: str, voice: str="alloy"):
+    creds = frappe.get_doc("Client Credentials", client_credentials)
+    api_key = creds.get_password("api_key")
+
+    ai_client = OpenAI(api_key=api_key)
+
+    file_name = f"tts_{frappe.utils.now_datetime().strftime('%Y%m%d%H%M%S')}.mp3"
+    output_path = frappe.get_site_path("public", "files", file_name)
+
+    response = ai_client.audio.speech.create(
+        model=model,
+        voice=voice,
+        input=text
+    )
+
+    with open(output_path, "wb") as f:
+        f.write(response.read())
+
+    public_url = frappe.utils.get_url(f"/files/{file_name}")
+
+    return public_url
+        
 
 
-def ask_local_ai(model, messages, to_number, stream=False):
+def ask_local_ai(model, messages, to_account, stream=False):
     try:
         settings = frappe.get_doc("Ai Settings", "Ai Settings")
         url = f"{settings.base_url}/chat"
@@ -414,11 +577,11 @@ def ask_local_ai(model, messages, to_number, stream=False):
         save_response_log(
             str(e),
             "Local",
-            to_number,
+            to_account,
         )
 
 
-def ask_ollama_ai(model, messages, to_number, stream=False):
+def ask_ollama_ai(model, messages, to_account, stream=False):
     try:
         client = Client(
             host="https://ollama.com",
@@ -434,11 +597,11 @@ def ask_ollama_ai(model, messages, to_number, stream=False):
         save_response_log(
             str(e),
             "Default",
-            to_number,
+            to_account,
         )
 
 
-def ask_gpt_ai(model, context, messages, to_number, stream=False):
+def ask_gpt_ai(model, context, messages, to_account, stream=False):
     try:
         creds = frappe.get_doc("Client Credentials", context.client_credentials)
         api_key = creds.get_password("api_key")
@@ -461,13 +624,13 @@ def ask_gpt_ai(model, context, messages, to_number, stream=False):
             }
     
     except openai.OpenAIError as e:
-        save_response_log(str(e), "GPT", to_number, True)
+        save_response_log(str(e), "GPT", to_account, True)
 
     except Exception as e:
-        save_response_log(str(e), "GPT", to_number, True)
+        save_response_log(str(e), "GPT", to_account, True)
 
 
-def get_online_data(url, auth_type=None, auth_token=None, timeout=30):
+def make_ai_request(method, url, body=None, auth_type=None, auth_token=None, timeout=30):
     try:
         headers = {
             "Accept-Content": "application/json"
@@ -476,7 +639,15 @@ def get_online_data(url, auth_type=None, auth_token=None, timeout=30):
         if (auth_type and auth_token) and auth_type in ["Bearer", "Basic", "Token"]:
             headers["Authorization"] = f"{auth_type} {auth_token}"
 
-        response = requests.get(url, headers=headers, timeout=timeout)
+        if method == "GET":
+            response = requests.get(url, headers=headers, timeout=timeout)
+
+        elif method == "POST":
+            if isinstance(body, str):
+                body = json.loads(body)
+                
+            response = requests.post(url, headers=headers, json=body, timeout=timeout)
+
         if response.status_code == 200:
             return response.json()
         
@@ -513,7 +684,9 @@ def post_to_webhook(context, json_body):
 
 
 @frappe.whitelist()
-def get_current_messages(chat_id, context) -> list:
+def get_current_messages(chat_id, context, include_history=True) -> list:
+    ai_settings = frappe.get_doc("Ai Settings", "Ai Settings")
+
     def get_remote_context(url):
         tries = 3
         while tries > 0:
@@ -559,18 +732,21 @@ def get_current_messages(chat_id, context) -> list:
             raise ValueError("Unsupported file type")
 
         return text_content.strip()
-    
-    messageDocs = frappe.get_all(
-        "Ai Messages Table",
-        filters={"parent": chat_id},
-        fields=["role", "content"],
-        order_by="idx",
-        limit=0,
-    )
+    if include_history:
+        messageDocs = frappe.get_all(
+            "Ai Messages Table",
+            filters={"parent": chat_id},
+            fields=["role", "content"],
+            order_by="idx",
+            limit=0,
+        )
 
     messages = []
 
+    main_rules = ai_settings.main_rules
+    
     content = AI_SYSTEM_PROMPT
+    content = content.replace("{MAIN_RULES}", main_rules)
     content = content.replace("{DATE}", datetime.now().strftime("%Y-%m-%d"))
 
     response_fields = context.response_fields if context.response_fields else ""
@@ -594,19 +770,21 @@ def get_current_messages(chat_id, context) -> list:
     content = content.replace("{INSTRUCTIONS}", context.system_prompt or "")
     content = content.replace("{JSON}", context.json_template or "")
     content = content.replace("{COMPLETION}", context.on_completion or "")
-    content = content.replace("{ERROR}", context.on_error or "")
+    # content = content.replace("{ERROR}", context.on_error or "")
     
     messages.append({
         "role": "system",
         "content": content,
     })
 
-    for m in messageDocs:
-        role = m["role"] if (m["role"] == "assistant" or m["role"] == "user") else "assistant"
-        messages.append({
-            "role": role,
-            "content": m["content"],
-        })
+    if include_history:
+        for m in messageDocs:
+            role = m["role"] if (m["role"] == "assistant" or m["role"] == "user") else "assistant"
+            messages.append({
+                "role": role,
+                "content": m["content"],
+            })
+
     return messages
 
 

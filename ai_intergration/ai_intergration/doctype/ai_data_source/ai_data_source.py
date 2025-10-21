@@ -28,7 +28,7 @@ class AiDataSource(Document):
 
 	def get_json_body(self):
 		body = {}
-		if self.method == "POST":
+		if self.method == "GET":
 			return body
 		
 		for field in self.filters:

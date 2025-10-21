@@ -7,7 +7,9 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-  "base_url"
+  "base_url",
+  "main_rules_section",
+  "main_rules"
  ],
  "fields": [
   {
@@ -16,12 +18,22 @@
    "in_list_view": 1,
    "label": "Base URL",
    "reqd": 1
+  },
+  {
+   "fieldname": "main_rules_section",
+   "fieldtype": "Section Break",
+   "label": "Main Rules"
+  },
+  {
+   "fieldname": "main_rules",
+   "fieldtype": "Long Text",
+   "label": "Main Rules"
   }
  ],
  "index_web_pages_for_search": 1,
  "issingle": 1,
  "links": [],
- "modified": "2025-03-05 12:24:47.431248",
+ "modified": "2025-10-08 10:55:33.030610",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Settings",

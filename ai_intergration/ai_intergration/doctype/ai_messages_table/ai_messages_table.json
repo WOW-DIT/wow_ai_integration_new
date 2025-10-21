@@ -16,11 +16,9 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Message",
-   "options": "Ai Message",
-   "reqd": 1
+   "options": "Ai Message"
   },
   {
-   "fetch_from": "message.role",
    "fieldname": "role",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -28,24 +26,23 @@
    "read_only": 1
   },
   {
-   "fetch_from": "message.content",
    "fieldname": "content",
    "fieldtype": "Long Text",
    "label": "Content",
    "read_only": 1
   },
   {
-   "fetch_from": "message.message_text",
    "fieldname": "message_text",
    "fieldtype": "Long Text",
    "in_list_view": 1,
-   "label": "Message Text"
+   "label": "Message Text",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-10-01 09:47:44.714604",
+ "modified": "2025-10-12 12:57:24.892767",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Messages Table",

@@ -7,6 +7,10 @@ frappe.ui.form.on('Ai Chat', {
 			frm.add_custom_button("Go Live", () => {
 				startLiveSession(frm);
 			}).addClass("btn-primary");
+
+			frm.add_custom_button("Clear Chat", () => {
+				clearChat(frm);
+			}).addClass("btn-primary");
 		}
 
 	},
@@ -45,8 +49,18 @@ frappe.ui.form.on('Ai Chat', {
 
 
 function startLiveSession(frm) {
+	let method = "";
+	if(frm.doc.channel_type === "WhatsApp") {
+		method = "whatsapp_integration.whatsapp_integration.doctype.whatsapp_live_chat.whatsapp_live_chat.start_live_session"
+	}
+	else if(frm.doc.channel_type === "Instagram") {
+		method = "instagram_integration.instagram.doctype.instagram_live_chat.instagram_live_chat.start_live_session"
+	}
+	else if(frm.doc.channel_type === "Facebook") {
+		method = "whatsapp_integration.whatsapp_integration.doctype.whatsapp_live_chat.whatsapp_live_chat.start_live_session"
+	}
 	frappe.call({
-		method: "whatsapp_integration.whatsapp_integration.doctype.whatsapp_live_chat.whatsapp_live_chat.start_live_session",
+		method: method,
 		args: {
 			chat_id: frm.doc.name
 		},
@@ -56,6 +70,41 @@ function startLiveSession(frm) {
 			}
 		}
 	})
+}
+
+
+function clearChat(frm) {
+	const d = new frappe.ui.Dialog({
+        title: __(`Are you sure you want to clear chat. All Messages will be removed permanently.`),
+        primary_action_label: __('Clear'),
+        primary_action(values) {
+            d.get_primary_btn().prop('disabled', true);
+            frappe.call({
+                method: `ai_intergration.ai_intergration.doctype.ai_chat.ai_chat.clear_chat`,
+				args: {
+					"chat_id": frm.doc.name
+				},
+                freeze: true,
+                freeze_message: __('Deleting all messages...'),
+                callback: function(res) {
+                    if(res.message.success) {
+                        frappe.msgprint(res.message.message)
+                        reload_page();
+                    }
+                },
+                always() {
+                    d.get_primary_btn().prop('disabled', false);
+                }
+            })
+        }
+    });
+
+    // Submit on Enter
+    d.$wrapper.find('input').on('keydown', (e) => {
+        if (e.key === 'Enter') d.get_primary_btn().click();
+    });
+
+    d.show();
 }
 
 
@@ -84,4 +133,11 @@ function getModels(frm) {
 			}
 		}
 	})
+}
+
+
+function reload_page(){
+    setTimeout(() => {
+        location.reload();
+    }, 3000);
 }

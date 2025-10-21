@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "autoname": "format:{whatsapp_client_id}-{phone_id}",
+ "autoname": "format:{user_id}-{phone_id}{instagram_instance}",
  "creation": "2025-03-05 13:05:21.992735",
  "default_view": "List",
  "doctype": "DocType",
@@ -10,6 +10,8 @@
  "field_order": [
   "label",
   "model",
+  "channel_type",
+  "user_id",
   "column_break_syeqp",
   "selected_model",
   "context",
@@ -18,8 +20,10 @@
   "whatsapp_instance",
   "whatsapp_business_id",
   "column_break_vlfbu",
-  "whatsapp_client_id",
   "phone_id",
+  "instagram_details_section",
+  "instagram_instance",
+  "column_break_qask",
   "section_break_ije9r",
   "messages",
   "section_break_vchlu",
@@ -57,7 +61,6 @@
   {
    "fieldname": "model",
    "fieldtype": "Data",
-   "in_list_view": 1,
    "label": "Model",
    "reqd": 1
   },
@@ -70,6 +73,8 @@
   {
    "fieldname": "context",
    "fieldtype": "Link",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
    "label": "Context",
    "options": "AI Agent",
    "reqd": 1
@@ -89,11 +94,6 @@
    "fieldtype": "Section Break"
   },
   {
-   "fieldname": "whatsapp_client_id",
-   "fieldtype": "Data",
-   "label": "WhatsApp Client ID"
-  },
-  {
    "collapsible": 1,
    "fieldname": "section_break_vchlu",
    "fieldtype": "Section Break",
@@ -101,6 +101,7 @@
    "label": "Local"
   },
   {
+   "depends_on": "eval: doc.channel_type === \"WhatsApp\"",
    "fieldname": "whatsapp_details_section",
    "fieldtype": "Section Break",
    "label": "WhatsApp Details"
@@ -125,12 +126,45 @@
    "default": "0",
    "fieldname": "is_live",
    "fieldtype": "Check",
-   "label": "Live"
+   "label": "Live",
+   "read_only": 1
+  },
+  {
+   "default": "WhatsApp",
+   "fieldname": "channel_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "in_standard_filter": 1,
+   "label": "Channel Type",
+   "options": "WhatsApp\nInstagram\nFacebook"
+  },
+  {
+   "depends_on": "eval: doc.channel_type === \"Instagram\"",
+   "fieldname": "instagram_details_section",
+   "fieldtype": "Section Break",
+   "label": "Instagram Details"
+  },
+  {
+   "fieldname": "instagram_instance",
+   "fieldtype": "Link",
+   "label": "Instagram Instance",
+   "mandatory_depends_on": "eval: doc.channel_type === \"Instagram\"",
+   "options": "Instagram Instance"
+  },
+  {
+   "fieldname": "column_break_qask",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "user_id",
+   "fieldtype": "Data",
+   "label": "User ID",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-30 17:16:18.461619",
+ "modified": "2025-10-08 17:01:38.907939",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Chat",

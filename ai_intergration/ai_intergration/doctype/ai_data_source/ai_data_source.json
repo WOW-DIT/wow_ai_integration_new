@@ -40,8 +40,7 @@
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "WhatsApp Instance",
-   "options": "WhatsApp Instance",
-   "reqd": 1
+   "options": "WhatsApp Instance"
   },
   {
    "fieldname": "section_break_hhdvq",
@@ -50,7 +49,7 @@
   {
    "description": "What action will trigger the Ai agent to send the request.",
    "fieldname": "when",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "in_list_view": 1,
    "label": "When",
    "reqd": 1
@@ -77,7 +76,7 @@
   },
   {
    "fieldname": "auth_token",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Auth Token"
   },
   {
@@ -89,7 +88,7 @@
   },
   {
    "fieldname": "instructions",
-   "fieldtype": "Text Editor",
+   "fieldtype": "Text",
    "label": "Instructions"
   },
   {
@@ -116,7 +115,7 @@
   },
   {
    "fieldname": "error_message",
-   "fieldtype": "Data",
+   "fieldtype": "Text",
    "label": "Error Message"
   },
   {
@@ -129,7 +128,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-09-10 13:33:04.668583",
+ "modified": "2025-10-20 13:36:13.163357",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Data Source",
