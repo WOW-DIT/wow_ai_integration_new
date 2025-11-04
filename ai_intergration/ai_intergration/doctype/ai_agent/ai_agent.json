@@ -8,6 +8,7 @@
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
+  "customer_id",
   "section_break_kd48y",
   "title",
   "default_model",
@@ -54,11 +55,11 @@
   "integration",
   "section_break_en49w",
   "source_type",
+  "source_template",
   "column_break_uljt5",
   "source_link",
   "source_file",
   "source_text",
-  "source_template",
   "section_break_ymnbe",
   "webhook_uri",
   "column_break_zrcfp",
@@ -290,7 +291,6 @@
    "fieldtype": "Column Break"
   },
   {
-   "depends_on": "eval: doc.source_type === \"Template\"",
    "fieldname": "source_template",
    "fieldtype": "Link",
    "label": "Source Template",
@@ -474,11 +474,18 @@
    "fieldname": "zid_section",
    "fieldtype": "Section Break",
    "label": "Zid"
+  },
+  {
+   "fieldname": "customer_id",
+   "fieldtype": "Link",
+   "label": "Customer ID",
+   "options": "Connectly Customer",
+   "reqd": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-15 16:40:31.153560",
+ "modified": "2025-10-26 17:07:48.212338",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "AI Agent",

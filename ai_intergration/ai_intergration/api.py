@@ -223,13 +223,15 @@ def ai_chat(
     to_account=None,
     timestamp: datetime=datetime.now(),
     stream=False,
+    context=None,
 ):
     try:
         if not isinstance(new_message, dict):
             new_message = json.loads(new_message)
 
         chat = frappe.get_doc("Ai Chat", chat_id)
-        context = frappe.get_doc("AI Agent", chat.context)
+        if not context:
+            context = frappe.get_doc("AI Agent", chat.context)
 
         is_live = chat.is_live
         

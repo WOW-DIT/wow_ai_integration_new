@@ -15,12 +15,16 @@
   "whatsapp_instance",
   "whatsapp_message_id",
   "instagram_instance",
+  "response_type",
   "section_break_a0jq2",
   "role",
   "image",
   "message_text",
   "content",
-  "timestamp"
+  "timestamp",
+  "call_section",
+  "call_id",
+  "output"
  ],
  "fields": [
   {
@@ -28,15 +32,13 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "in_standard_filter": 1,
-   "label": "Role",
-   "reqd": 1
+   "label": "Role"
   },
   {
    "fieldname": "content",
    "fieldtype": "Long Text",
    "label": "Content",
-   "read_only": 1,
-   "reqd": 1
+   "read_only": 1
   },
   {
    "fieldname": "chat",
@@ -55,7 +57,8 @@
   },
   {
    "fieldname": "section_break_a0jq2",
-   "fieldtype": "Section Break"
+   "fieldtype": "Section Break",
+   "label": "Message Details"
   },
   {
    "fieldname": "column_break_ewjaq",
@@ -116,11 +119,36 @@
    "label": "Instagram Instance",
    "mandatory_depends_on": "eval: doc.channel_type === \"Instagram\"",
    "options": "Instagram Instance"
+  },
+  {
+   "default": "Normal",
+   "fieldname": "response_type",
+   "fieldtype": "Select",
+   "label": "Response Type",
+   "options": "Normal\nFunction Call"
+  },
+  {
+   "depends_on": "eval: doc.response_type === \"Function Call\"",
+   "fieldname": "call_section",
+   "fieldtype": "Section Break",
+   "label": "Function Call"
+  },
+  {
+   "fieldname": "call_id",
+   "fieldtype": "Data",
+   "label": "Call ID",
+   "read_only": 1
+  },
+  {
+   "fieldname": "output",
+   "fieldtype": "Long Text",
+   "label": "Output",
+   "read_only": 1
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-07 11:45:08.851405",
+ "modified": "2025-10-23 10:39:29.741818",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Message",

@@ -7,8 +7,10 @@
  "engine": "InnoDB",
  "field_order": [
   "title",
+  "function_name",
   "column_break_ruhda",
   "whatsapp_instance",
+  "customer_id",
   "section_break_hhdvq",
   "when",
   "error_message",
@@ -16,14 +18,18 @@
   "instructions",
   "section_break_jbsgj",
   "method",
-  "url",
   "auth_type",
-  "auth_token",
-  "column_break_1okrh",
   "test_connection",
   "verified",
+  "column_break_1okrh",
+  "url",
+  "auth_token",
   "section_break_isjdo",
-  "filters"
+  "entry_type",
+  "properties_json",
+  "headers_json",
+  "filters",
+  "headers"
  ],
  "fields": [
   {
@@ -94,12 +100,13 @@
   {
    "fieldname": "section_break_isjdo",
    "fieldtype": "Section Break",
-   "label": "URL Parameters"
+   "label": "Request Details"
   },
   {
+   "depends_on": "eval: doc.entry_type === \"Table\"",
    "fieldname": "filters",
    "fieldtype": "Table",
-   "label": "Filters",
+   "label": "Properties",
    "options": "Ai Data Source Filters"
   },
   {
@@ -124,11 +131,53 @@
    "label": "Method",
    "options": "GET\nPOST\nPUT\nDELETE",
    "reqd": 1
+  },
+  {
+   "description": "Only lower case and underscore. Example: get_weather",
+   "fieldname": "function_name",
+   "fieldtype": "Data",
+   "label": "Function Name",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.entry_type === \"Table\"",
+   "fieldname": "headers",
+   "fieldtype": "Table",
+   "label": "Headers",
+   "options": "Ai Data Source Headers"
+  },
+  {
+   "fieldname": "customer_id",
+   "fieldtype": "Link",
+   "label": "Customer ID",
+   "options": "Connectly Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "entry_type",
+   "fieldtype": "Select",
+   "label": "Entry Type",
+   "options": "\nJSON\nTable",
+   "reqd": 1
+  },
+  {
+   "depends_on": "eval: doc.entry_type === \"JSON\"",
+   "description": "Example: {\n    \"total_amount\": {\n        \"type\": \"number\",\n        \"description\": \"Total amount of the order.\"\n    },\n    \"items\": {\n        \"type\": \"array\",\n        \"description\": \"List of purchased items.\",\n        \"items\": {\n            \"type\": \"object\",\n            \"properties\": {\n                \"name\": {\n                    \"type\": \"string\",\n                    \"description\": \"Name of the item.\"\n                },\n                \"amount\": {\n                    \"type\": \"number\",\n                    \"description\": \"Amount for this item.\"\n                }\n            },\n            \"required\": [\"name\", \"amount\"],\n            \"additionalProperties\": false\n        }\n    },\n    \"first_name\": {\n        \"type\": \"string\",\n        \"description\": \"Customer's first name.\"\n    },\n    \"last_name\": {\n        \"type\": \"string\",\n        \"description\": \"Customer's last name.\"\n    },\n    \"phone_number\": {\n        \"type\": \"string\",\n        \"description\": \"Customer's phone number (e.g. 966570123456).\"\n    },\n    \"email\": {\n        \"type\": \"string\",\n        \"description\": \"Customer's email address.\"\n    }\n}",
+   "fieldname": "properties_json",
+   "fieldtype": "JSON",
+   "label": "Properties JSON"
+  },
+  {
+   "depends_on": "eval: doc.entry_type === \"JSON\"",
+   "description": "Example: {\"Authorization\": \"Bearer 123456\", Accept-Language\": \"ar\"}",
+   "fieldname": "headers_json",
+   "fieldtype": "JSON",
+   "label": "Headers JSON"
   }
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-20 13:36:13.163357",
+ "modified": "2025-10-23 16:22:34.388408",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Data Source",

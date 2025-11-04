@@ -7,8 +7,11 @@
  "engine": "InnoDB",
  "field_order": [
   "field_name",
+  "type",
+  "description",
   "example",
-  "format"
+  "format",
+  "required"
  ],
  "fields": [
   {
@@ -29,12 +32,32 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Format"
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Small Text",
+   "label": "Description",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "required",
+   "fieldtype": "Check",
+   "label": "Required"
+  },
+  {
+   "default": "string",
+   "fieldname": "type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Type",
+   "options": "string\nnumber\narray\nobject"
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-09-10 13:30:30.327657",
+ "modified": "2025-10-23 15:33:22.285031",
  "modified_by": "Administrator",
  "module": "Ai Intergration",
  "name": "Ai Data Source Filters",

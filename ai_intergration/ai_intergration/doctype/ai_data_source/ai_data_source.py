@@ -36,6 +36,48 @@ class AiDataSource(Document):
 			body[field.field_name] = example
 
 		return body
+	
+
+	def get_properties(self) -> tuple:
+		props = {}
+		required_props = []
+		if self.entry_type == "Table":
+			for f in self.filters:
+				description = f"{f.description}."
+
+				if f.example:
+					description += f" Example: {f.example}."
+
+				if getattr(f, "format"):
+					description += f" Format: {getattr(f, "format")}."
+
+
+				props[f.field_name] = {
+					"type": "string",
+					"description": description,
+				}
+
+				# if f.required:
+				required_props.append(f.field_name)
+
+		elif self.entry_type == "JSON":
+			props = json.loads(self.properties_json)
+			for key, value in props.items():
+				required_props.append(key)
+
+		return props, required_props
+	
+
+	def get_headers(self) -> tuple:
+		headers = {}
+		if self.entry_type == "Table":
+			for h in self.headers:
+				headers[h.key] = h.value
+
+		elif self.entry_type == "JSON" and self.headers_json:
+			headers = json.loads(self.headers_json)
+
+		return headers
 
 
 	def fetch_data(self):
